@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ageOf, app, childrenOf, generation, partnerOf, personById } from "@/lib/family";
+import { Mic } from "lucide-react";
+import { ageOf, app, categories, childrenOf, generation, partnerOf, personById, photos } from "@/lib/family";
 import { storiesQuery } from "@/lib/stories";
 import { StoryCard } from "@/components/StoryCard";
 import { Button } from "@/components/ui/button";
