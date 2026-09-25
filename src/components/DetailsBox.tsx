@@ -56,14 +56,25 @@ export function DetailsBox({ id, name }: { id: string; name: string }) {
           <label className="text-sm font-medium">Lives in (city)</label>
           <Input value={city} maxLength={100} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Tallinn" />
           <label className="mt-2 text-sm font-medium">Studied</label>
-          {studies.map((s, i) => (
-            <div key={i} className="flex gap-2">
-              <Input value={s.what} maxLength={150} placeholder="What (e.g. Marketing)" onChange={(e) => setStudies(studies.map((x, j) => j === i ? { ...x, what: e.target.value } : x))} />
-              <Input value={s.where} maxLength={150} placeholder="Where (e.g. Tartu University)" onChange={(e) => setStudies(studies.map((x, j) => j === i ? { ...x, where: e.target.value } : x))} />
-              <Button variant="ghost" size="icon" aria-label="Remove" onClick={() => setStudies(studies.filter((_, j) => j !== i))}><X className="h-4 w-4" /></Button>
-            </div>
-          ))}
-          <Button variant="outline" size="sm" className="w-fit" onClick={() => setStudies([...studies, { what: "", where: "" }])}><Plus className="h-4 w-4" /> Add another</Button>
+          {studies.map((s, i) => {
+            const set = (patch: Partial<Study>) => setStudies(studies.map((x, j) => (j === i ? { ...x, ...patch } : x)));
+            return (
+              <div key={i} className="grid gap-2 rounded-lg border border-border p-2">
+                <div className="flex gap-2">
+                  <Input value={s.what} maxLength={150} placeholder="What (e.g. Marketing)" onChange={(e) => set({ what: e.target.value })} />
+                  <Input value={s.where} maxLength={150} placeholder="Where (e.g. Tartu University)" onChange={(e) => set({ where: e.target.value })} />
+                  <Button variant="ghost" size="icon" aria-label="Remove" onClick={() => setStudies(studies.filter((_, j) => j !== i))}><X className="h-4 w-4" /></Button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input type="number" className="w-28" placeholder="From year" value={s.from_year ?? ""} onChange={(e) => set({ from_year: e.target.value ? Number(e.target.value) : null })} />
+                  <span className="text-muted-foreground">–</span>
+                  <Input type="number" className="w-28" placeholder="To year" value={s.to_year ?? ""} onChange={(e) => set({ to_year: e.target.value ? Number(e.target.value) : null })} />
+                  <span className="text-xs text-muted-foreground">{spanLabel(s.from_year, s.to_year)}</span>
+                </div>
+              </div>
+            );
+          })}
+          <Button variant="outline" size="sm" className="w-fit" onClick={() => setStudies([...studies, { what: "", where: "", from_year: null, to_year: null }])}><Plus className="h-4 w-4" /> Add another</Button>
           <DialogFooter><Button onClick={save} disabled={saving}>{saving ? "Saving…" : "Save"}</Button></DialogFooter>
         </DialogContent>
       </Dialog>
