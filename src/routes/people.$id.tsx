@@ -9,6 +9,7 @@ import { StoryCard } from "@/components/StoryCard";
 import { Button } from "@/components/ui/button";
 import { DetailsBox } from "@/components/DetailsBox";
 import { ConnectedLine } from "@/components/PatternsBox";
+import { TimelineBox } from "@/components/TimelineBox";
 
 export const Route = createFileRoute("/people/$id")({
   loader: ({ params }) => {
@@ -66,6 +67,7 @@ function Profile() {
         </div>
       </div>
       <DetailsBox id={id} name={p.name} />
+      <TimelineBox id={id} name={p.name} />
 
       {/* About — AI-written from their era and their stories */}
       <div className="mt-6 rounded-xl border border-border bg-card p-5">

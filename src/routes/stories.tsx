@@ -9,6 +9,7 @@ import { StoryCard } from "@/components/StoryCard";
 import { PatternsBox } from "@/components/PatternsBox";
 import { Button } from "@/components/ui/button";
 import { generateFamilyHistory } from "@/lib/family-history.functions";
+import { FamilyChat } from "@/components/FamilyChat";
 
 type Search = { person?: string | undefined; category?: string | undefined };
 
@@ -90,6 +91,7 @@ function Browse() {
         </p>
       )}
 
+      {!filtered && <div className="mb-8"><FamilyChat /></div>}
       {!filtered && <PatternsBox />}
 
       {/* Category grid */}
