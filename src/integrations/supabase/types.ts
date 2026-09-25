@@ -28,6 +28,7 @@ export type Database = {
           storyteller_id: string
           subtopic_id: string
           title: string | null
+          transcript: string | null
         }
         Insert: {
           about_person_id?: string | null
@@ -42,6 +43,7 @@ export type Database = {
           storyteller_id: string
           subtopic_id: string
           title?: string | null
+          transcript?: string | null
         }
         Update: {
           about_person_id?: string | null
@@ -56,6 +58,7 @@ export type Database = {
           storyteller_id?: string
           subtopic_id?: string
           title?: string | null
+          transcript?: string | null
         }
         Relationships: []
       }
