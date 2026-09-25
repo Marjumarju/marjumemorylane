@@ -8,6 +8,13 @@
       "when": 1790334618893,
       "tag": "0000_stories_and_recordings",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790335037967,
+      "tag": "0001_open_access_no_login",
+      "breakpoints": true
     }
   ]
 }
