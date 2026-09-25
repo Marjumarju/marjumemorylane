@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Mic } from "lucide-react";
-import { ageOf, app, categories, childrenOf, generation, partnerOf, personById, photos } from "@/lib/family";
+import { ageOf, categories, generation, personById, photos } from "@/lib/family";
 import { storiesQuery } from "@/lib/stories";
 import { StoryCard } from "@/components/StoryCard";
 import { Button } from "@/components/ui/button";
@@ -31,18 +31,8 @@ function Profile() {
   const { data: stories = [] } = useQuery(storiesQuery);
   const told = stories.filter((s) => s.storyteller_id === id && (!s.about_person_id || s.about_person_id === id));
   const about = stories.filter((s) => s.about_person_id === id && s.storyteller_id !== id);
-  const parents = p.parents.map(personById).filter(Boolean);
-  const partner = partnerOf(id);
-  const kids = childrenOf(id);
   const gen = generation(p);
   const canTell = p.tells_stories !== "told_by_family";
-
-  const rel = (label: string, list: { id: string; name: string }[]) =>
-    list.length > 0 && (
-      <div><span className="text-muted-foreground">{label}: </span>
-        {list.map((x, i) => <span key={x.id}>{i > 0 && ", "}<Link to="/people/$id" params={{ id: x.id }} className="text-primary hover:underline">{x.name}</Link></span>)}
-      </div>
-    );
 
   const mine = stories.filter((s) => s.storyteller_id === id || s.about_person_id === id);
   const topicsCovered = categories.filter((c) => mine.some((s) => s.category_id === c.id));
@@ -57,15 +47,9 @@ function Profile() {
           <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-border bg-muted font-display text-3xl shadow-md">{p.name[0]}</div>
         )}
         <div>
-          <div className="text-xs uppercase tracking-widest text-muted-foreground">Generation {gen}</div>
-          <h1 className="mt-1 font-display text-5xl">{p.name}</h1>
+          <h1 className="font-display text-5xl">{p.name}</h1>
           <p className="mt-1 text-muted-foreground">{ageOf(p)} years old</p>
         </div>
-      </div>
-      <div className="mt-4 space-y-1 text-sm">
-        {rel("Parents", parents as { id: string; name: string }[])}
-        {partner && rel("Partner", [partner])}
-        {rel("Children", kids)}
       </div>
 
       {/* Story snapshot — grows as stories are told */}
@@ -90,7 +74,6 @@ function Profile() {
         )}
       </div>
 
-      <p className="mt-4 max-w-2xl text-sm italic text-muted-foreground">{app.generation_context[String(gen)]}</p>
 
       <div className="mt-6 flex flex-wrap gap-3">
         {canTell && <Link to="/record" search={{ teller: id }}><Button>{p.tells_stories === "with_help" ? `Help ${p.name} tell a story` : `Record as ${p.name}`}</Button></Link>}
