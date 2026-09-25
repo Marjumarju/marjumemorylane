@@ -33,6 +33,7 @@ export const people = app.family_tree.people;
 /** Family photos by person id; anyone without one shows their initial instead. */
 export const photos: Partial<Record<string, string>> = {
   martin: martinPhoto.url,
+  tanel: tanelPhoto.url,
   jaanika: jaanikaPhoto.url,
   liis: liisPhoto.url,
   ene: enePhoto.url,
