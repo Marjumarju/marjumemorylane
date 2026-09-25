@@ -6,6 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { ageOf, followUps, generation, people, personById, tellers, topicsFor, type Category, type Subtopic } from "@/lib/family";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useServerFn } from "@tanstack/react-start";
+import { transcribeAudio } from "@/lib/transcribe.functions";
+import { blobToBase64, pickMime } from "@/lib/audio";
 
 type Search = { teller?: string | undefined; about?: string | undefined };
 
@@ -41,6 +44,10 @@ function Record() {
   const [secs, setSecs] = useState(0);
   const [recording, setRecording] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [transcript, setTranscript] = useState("");
+  const [transcribing, setTranscribing] = useState(false);
+  const transcribeFn = useServerFn(transcribeAudio);
   const rec = useRef<MediaRecorder | null>(null);
   const timer = useRef<number | undefined>(undefined);
 
@@ -52,6 +59,20 @@ function Record() {
   const tellerChoices = search.about ? tellers.filter((p) => ageOf(p) >= 18) : tellers;
 
   useEffect(() => () => window.clearInterval(timer.current), []);
+  useEffect(() => {
+    if (!blob) { setPreviewUrl(null); return; }
+    const u = URL.createObjectURL(blob);
+    setPreviewUrl(u);
+    let cancelled = false;
+    setTranscribing(true);
+    setTranscript("");
+    blobToBase64(blob)
+      .then((audio) => transcribeFn({ data: { audio, mime: blob.type } }))
+      .then((r) => { if (!cancelled) setTranscript(r.text); })
+      .catch((e) => { if (!cancelled) toast.error(e instanceof Error ? e.message : "Couldn't transcribe"); })
+      .finally(() => { if (!cancelled) setTranscribing(false); });
+    return () => { cancelled = true; URL.revokeObjectURL(u); };
+  }, [blob]);
 
   function ask(c: Category) {
     const subs = c.subtopics.length > 1 && pick ? c.subtopics.filter((s) => s.id !== pick.s.id) : c.subtopics;
@@ -64,14 +85,15 @@ function Record() {
   async function start() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mr = new MediaRecorder(stream);
+      const mime = pickMime();
+      const mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
       const chunks: Blob[] = [];
-      mr.ondataavailable = (e) => chunks.push(e.data);
+      mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
       mr.onstop = () => {
-        setBlob(new Blob(chunks, { type: mr.mimeType }));
+        setBlob(new Blob(chunks, { type: (mr.mimeType || mime || "audio/webm").split(";")[0] }));
         stream.getTracks().forEach((t) => t.stop());
       };
-      mr.start();
+      mr.start(1000);
       rec.current = mr;
       setBlob(null);
       setSecs(0);
@@ -106,7 +128,8 @@ function Record() {
       note: note.trim() || null,
       audio_path,
       duration_seconds: blob ? secs : null,
-    });
+      transcript: transcript.trim() || null,
+    } as never);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
     await qc.invalidateQueries({ queryKey: ["stories"] });
@@ -158,8 +181,19 @@ function Record() {
             ) : (
               <Button size="lg" variant="destructive" onClick={stop}>■ Stop · {mmss}</Button>
             )}
-            {blob && !recording && <audio controls src={URL.createObjectURL(blob)} />}
           </div>
+          {previewUrl && !recording && (
+            <div className="mt-4">
+              <p className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">Listen back</p>
+              <audio controls src={previewUrl} className="w-full" />
+              <p className="mt-4 mb-1 text-xs uppercase tracking-widest text-muted-foreground">What you said</p>
+              {transcribing ? (
+                <p className="text-sm italic text-muted-foreground">Writing it down…</p>
+              ) : (
+                <Textarea rows={5} value={transcript} onChange={(e) => setTranscript(e.target.value)} placeholder="The transcript will appear here" />
+              )}
+            </div>
+          )}
           {recording && (
             <div className="mt-4 text-sm text-muted-foreground">
               Stuck? Try: {followUps.map((f) => <span key={f} className="mr-3 italic">{f}</span>)}
@@ -167,7 +201,7 @@ function Record() {
           )}
 
           <Textarea className="mt-6" rows={4} placeholder="Add a written note, names, or type the story if you'd rather not record (optional)" value={note} onChange={(e) => setNote(e.target.value)} />
-          <Button className="mt-4" size="lg" disabled={saving || recording || (!blob && !note.trim())} onClick={save}>
+          <Button className="mt-4" size="lg" disabled={saving || recording || transcribing || (!blob && !note.trim())} onClick={save}>
             {saving ? "Saving…" : "Save story"}
           </Button>
         </Step>
