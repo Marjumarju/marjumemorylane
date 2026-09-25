@@ -7,6 +7,12 @@
 - Answers name the people and topics they come from. If the stories don't cover the question, it says so and suggests who could be asked to record that story, instead of making things up.
 - A few example questions to tap when the box is empty, and a "New conversation" button to start over.
 
+## Personal timeline on each person's page
+- A visible timeline down the page: year + event, e.g. "1975 Born in Tartu", "1993 Went to Taltech", "2019 Moved to Lisbon".
+- Filled in automatically from their stories and details (studies, city), marked "from a story" and linked to that story.
+- Anyone can add, edit or remove a line. Edits you make are kept and never overwritten when stories are re-read.
+- An "Update from stories" button looks for new events after new recordings.
+
 ## Technical details
 - New server route `src/routes/api/chat.ts` (POST): builds a system prompt from family.json (people, relations, generation_context), all stories (teller, about, category/subtopic, question, title, note, transcript) and person_details. Streams with AI SDK `streamText` using `@ai-sdk/openai` `.responses("openai/gpt-6-astra")` through the Lovable AI Gateway, with the full Responses options block (forceReasoning, effort low, summary auto, store false, encrypted reasoning), run-ID fetch wrapper, and `toUIMessageStreamResponse`. 402/429 return friendly messages shown in the chat.
 - New `src/components/FamilyChat.tsx` using `useChat` + `DefaultChatTransport` and AI Elements (Conversation, Message, MessageResponse, PromptInput, PromptInputSubmit, Suggestion). Messages render from `message.parts`; typing indicator while submitted; textarea stays focused. Uses a family-themed avatar, not a generic sparkle icon.
