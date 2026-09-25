@@ -36,13 +36,13 @@ export function TimelineBox({ id, name }: { id: string; name: string }) {
     const { error } = edit.id
       ? await supabase.from("person_timeline").update(row).eq("id", edit.id)
       : await supabase.from("person_timeline").insert(row);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setEdit(null);
     qc.invalidateQueries({ queryKey: key });
   }
   async function remove(rid: string) {
     const { error } = await supabase.from("person_timeline").delete().eq("id", rid);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: key });
   }
 

@@ -33,7 +33,7 @@ export const extractTimeline = createServerFn({ method: "POST" })
     try {
       const s = raw.slice(raw.indexOf("["), raw.lastIndexOf("]") + 1);
       const ids = new Set((stories ?? []).map((x) => x.id));
-      events = (JSON.parse(s) as Record<string, unknown>[])
+      events = (JSON.parse(s) as { year?: unknown; label?: unknown; place?: unknown; story_id?: unknown }[])
         .map((e) => ({
           year: Number.isInteger(e.year) ? (e.year as number) : null,
           label: String(e.label ?? "").trim().slice(0, 200),
