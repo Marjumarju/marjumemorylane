@@ -84,9 +84,9 @@ export const getPersonAbout = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(12);
 
-    const { data: det } = await supabase.from("person_details").select("city, studies").eq("person_id", p.id).maybeSingle();
+    const { data: det } = await supabase.from("person_details").select("city, birth_place, studies").eq("person_id", p.id).maybeSingle();
     const studies = ((det?.studies as { what?: string; where?: string }[] | null) ?? []).map((x) => [x.what, x.where].filter(Boolean).join(" at ")).filter(Boolean);
-    const facts = [det?.city ? `Lives in ${det.city}.` : "", studies.length ? `Studied: ${studies.join("; ")}.` : ""].filter(Boolean).join(" ");
+    const facts = [det?.birth_place ? `Born in ${det.birth_place}.` : "", det?.city ? `Lives in ${det.city}.` : "", studies.length ? `Studied: ${studies.join("; ")}.` : ""].filter(Boolean).join(" ");
 
     const snippets = (rows ?? [])
       .map((r) => [r.question, r.transcript || r.note].filter(Boolean).join(" — "))
