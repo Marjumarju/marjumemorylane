@@ -1,10 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Mic } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Mic, RefreshCw, Sparkles } from "lucide-react";
 import { ageOf, categories, generation, personById, photos } from "@/lib/family";
 import { storiesQuery } from "@/lib/stories";
+import { getPersonAbout } from "@/lib/about.functions";
 import { StoryCard } from "@/components/StoryCard";
 import { Button } from "@/components/ui/button";
+import { DetailsBox } from "@/components/DetailsBox";
+import { ConnectedLine } from "@/components/PatternsBox";
+import { TimelineBox } from "@/components/TimelineBox";
 
 export const Route = createFileRoute("/people/$id")({
   loader: ({ params }) => {
@@ -38,6 +43,16 @@ function Profile() {
   const topicsCovered = categories.filter((c) => mine.some((s) => s.category_id === c.id));
   const photo = photos[id];
 
+  const queryClient = useQueryClient();
+  const fetchAbout = useServerFn(getPersonAbout);
+  const aboutKey = ["about", id, mine.length];
+  const aboutQuery = useQuery({
+    queryKey: aboutKey,
+    queryFn: () => fetchAbout({ data: { personId: id } }),
+    staleTime: 1000 * 60 * 30,
+    retry: false,
+  });
+
   return (
     <div>
       <div className="flex items-center gap-5">
@@ -50,6 +65,44 @@ function Profile() {
           <h1 className="font-display text-5xl">{p.name}</h1>
           <p className="mt-1 text-muted-foreground">{ageOf(p)} years old</p>
         </div>
+      </div>
+      <DetailsBox id={id} name={p.name} />
+      <TimelineBox id={id} name={p.name} />
+
+      {/* About — AI-written from their era and their stories */}
+      <div className="mt-6 rounded-xl border border-border bg-card p-5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <Sparkles className="h-4 w-4 text-primary" />
+            About {p.name}
+          </div>
+          {aboutQuery.data && (
+            <button
+              type="button"
+              onClick={() => queryClient.invalidateQueries({ queryKey: aboutKey })}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+            >
+              <RefreshCw className="h-3 w-3" /> Refresh
+            </button>
+          )}
+        </div>
+        {aboutQuery.isPending ? (
+          <p className="mt-2 text-sm text-muted-foreground">Writing a few words about {p.name}…</p>
+        ) : aboutQuery.isError ? (
+          <p className="mt-2 text-sm text-muted-foreground">{aboutQuery.error.message}</p>
+        ) : (
+          <div className="mt-3 space-y-3">
+            {(aboutQuery.data.sections.length
+              ? aboutQuery.data.sections
+              : [{ heading: "", text: aboutQuery.data.about }]
+            ).map((s, i) => (
+              <div key={i}>
+                {s.heading && <p className="text-xs font-semibold uppercase tracking-wide text-primary">{s.heading}</p>}
+                <p className="mt-1 text-sm leading-relaxed">{s.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Story snapshot — grows as stories are told */}
@@ -72,6 +125,7 @@ function Profile() {
         {mine.length === 0 && (
           <p className="mt-2 text-sm text-muted-foreground">Record the first one and this page will start filling in.</p>
         )}
+        <ConnectedLine id={id} />
       </div>
 
 

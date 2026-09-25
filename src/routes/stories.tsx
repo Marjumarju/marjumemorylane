@@ -4,6 +4,8 @@ import { BookOpen, Mic, Users } from "lucide-react";
 import { categories, people, personById } from "@/lib/family";
 import { storiesQuery } from "@/lib/stories";
 import { StoryCard } from "@/components/StoryCard";
+import { PatternsBox } from "@/components/PatternsBox";
+import { FamilyChat } from "@/components/FamilyChat";
 
 type Search = { person?: string | undefined; category?: string | undefined };
 
@@ -67,6 +69,9 @@ function Browse() {
           {latest.title ? <> — “{latest.title}”</> : null}.
         </p>
       )}
+
+      {!filtered && <div className="mb-8"><FamilyChat /></div>}
+      {!filtered && <PatternsBox />}
 
       {/* Category grid */}
       <h2 className="mt-10 mb-4 text-xs uppercase tracking-widest text-muted-foreground">Pick a topic</h2>
