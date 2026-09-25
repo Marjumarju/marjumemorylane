@@ -23,7 +23,7 @@ export const extractTimeline = createServerFn({ method: "POST" })
     });
     const prompt = [
       `Build life timeline events for ${p.name}, born ${p.birth_year}.`,
-      `Return ONLY a JSON array like [{"year": 1993, "label": "Started studying logistics at Taltech", "place": "Tallinn", "story_id": null}]. year may be null if unknown; place may be null; story_id is the id of the story the event came from, or null.`,
+      `Return ONLY a JSON array like [{"year": 1993, "end_year": 1996, "label": "Studied logistics at Taltech", "place": "Tallinn", "story_id": null}]. year is when it started and may be null if unknown; end_year is when it ended for things that lasted (studies, living in a place, a job) and must be null for one-off events; place may be null; story_id is the id of the story the event came from, or null.`,
       `ONLY major life milestones: birth, moving to a new city or country, starting or finishing studies, starting a significant job or career change, marriage, birth of a child, a life-changing event. At most 6 events in total.`,
       `Do NOT include holidays, trips, hobbies, everyday anecdotes, feelings, or small moments from stories. If a story holds no milestone, return nothing for it. Short labels. Never invent facts or years; estimate only when clearly implied.`,
       `Always include "Born" with year ${p.birth_year}.`,
