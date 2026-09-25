@@ -47,6 +47,7 @@ export async function buildFamilyContext() {
         parents.length ? `parents: ${parents.join(", ")}` : "",
         partner ? `partner: ${partner.name}` : "",
         kids.length ? `children: ${kids.join(", ")}` : "",
+        d?.birth_place ? `born in ${d.birth_place}` : "",
         d?.city ? `lives in ${d.city}` : "",
         studies.length ? `studied: ${studies.join("; ")}` : "",
         tl.length ? `timeline: ${tl.join("; ")}` : "",
