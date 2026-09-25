@@ -24,3 +24,36 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Deploying to Railway
+
+The repo ships a [`railway.json`](railway.json). Railway picks it up automatically, so a
+service pointed at this repo needs no build/start configuration in the dashboard.
+
+What it does:
+
+- **Build**: `NITRO_PRESET=node-server npm run build`. Without that variable the Vite/Nitro
+  build defaults to `cloudflare-module` (what Lovable publishes to), which produces a Worker
+  bundle Railway cannot run. `NITRO_PRESET` only overrides the default preset — it changes
+  nothing about the Lovable build, which ignores the variable and always targets Cloudflare.
+- **Start**: `node .output/server/index.mjs` — the Nitro Node server. It listens on `PORT`
+  (Railway injects it) and serves the static client from `.output/public`.
+- **Node version**: pinned to 22 via [`.node-version`](.node-version); Vite 8 requires
+  `^20.19 || >=22.12`.
+
+### Environment variables
+
+Set these as service variables in Railway. `.env` in the repo is only read at build time by
+Vite, so the `VITE_*` values are already baked into the client bundle — the server-side ones
+are not.
+
+| Variable                    | Needed for                                       |
+| --------------------------- | ------------------------------------------------ |
+| `SUPABASE_URL`              | SSR and the auth middleware                      |
+| `SUPABASE_PUBLISHABLE_KEY`  | SSR and the auth middleware                      |
+| `SUPABASE_SERVICE_ROLE_KEY` | server-side Supabase client (privileged queries) |
+| `LOVABLE_API_KEY`           | audio transcription via the Lovable AI gateway   |
+| `LOVABLE_CRON_SECRET`       | cron endpoint auth, if cron jobs are used        |
+
+Database migrations still run from a workstation (`drizzle-kit`, using
+`LOVABLE_DB_MIGRATION_URL`); nothing in the Railway deploy touches them.
