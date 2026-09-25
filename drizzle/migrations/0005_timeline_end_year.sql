@@ -1,0 +1,1 @@
+ALTER TABLE public.person_timeline ADD COLUMN IF NOT EXISTS end_year integer;
