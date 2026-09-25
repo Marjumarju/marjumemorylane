@@ -6,6 +6,7 @@ import enePhoto from "@/assets/ene.png.asset.json";
 import liisPhoto from "@/assets/liis.png.asset.json";
 import jaanikaPhoto from "@/assets/jaanika.png.asset.json";
 import martinPhoto from "@/assets/martin.png.asset.json";
+import tanelPhoto from "@/assets/tanel.png.asset.json";
 
 export type Person = {
   id: string;
@@ -32,6 +33,7 @@ export const people = app.family_tree.people;
 /** Family photos by person id; anyone without one shows their initial instead. */
 export const photos: Partial<Record<string, string>> = {
   martin: martinPhoto.url,
+  tanel: tanelPhoto.url,
   jaanika: jaanikaPhoto.url,
   liis: liisPhoto.url,
   ene: enePhoto.url,
