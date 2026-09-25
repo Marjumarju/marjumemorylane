@@ -86,9 +86,10 @@ export function TimelineBox({ id, name }: { id: string; name: string }) {
               <span className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full bg-primary" />
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <span className="font-display text-lg text-primary">{r.year ?? "—"}</span>{" "}
+                  <span className="font-display text-lg text-primary">{whenLabel(r)}</span>{" "}
                   <span>{r.label}</span>
                   {r.place && <span className="text-muted-foreground"> · {r.place}</span>}
+                  {howLong(r) && <span className="text-muted-foreground"> · {howLong(r)}</span>}
                   {r.source === "story" && <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">from a story</span>}
                 </div>
                 <div className="flex gap-1 opacity-60 group-hover:opacity-100">
