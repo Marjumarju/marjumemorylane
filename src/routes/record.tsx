@@ -50,6 +50,9 @@ function Record() {
   const transcribeFn = useServerFn(transcribeAudio);
   const rec = useRef<MediaRecorder | null>(null);
   const timer = useRef<number | undefined>(undefined);
+  const [level, setLevel] = useState(0);
+  const heard = useRef(0);
+  const meter = useRef<{ ctx: AudioContext; raf: number } | null>(null);
 
   const teller = personById(tellerId);
   const about = personById(aboutId) ?? teller;
@@ -89,7 +92,29 @@ function Record() {
       const mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
       const chunks: Blob[] = [];
       mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+      const ctx = new AudioContext();
+      const an = ctx.createAnalyser();
+      ctx.createMediaStreamSource(stream).connect(an);
+      const buf = new Uint8Array(an.fftSize);
+      heard.current = 0;
+      const tick = () => {
+        an.getByteTimeDomainData(buf);
+        let peak = 0;
+        for (const v of buf) peak = Math.max(peak, Math.abs(v - 128));
+        const l = Math.min(1, peak / 64);
+        if (l > 0.05) heard.current++;
+        setLevel(l);
+        meter.current!.raf = requestAnimationFrame(tick);
+      };
+      meter.current = { ctx, raf: requestAnimationFrame(tick) };
       mr.onstop = () => {
+        if (meter.current) { cancelAnimationFrame(meter.current.raf); meter.current.ctx.close(); meter.current = null; }
+        setLevel(0);
+        if (heard.current < 5) {
+          toast.error("We couldn't hear anything — your microphone sent silence. Check it isn't muted, or open the app in its own browser tab and allow the microphone.");
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
         setBlob(new Blob(chunks, { type: (mr.mimeType || mime || "audio/webm").split(";")[0] ?? "audio/webm" }));
         stream.getTracks().forEach((t) => t.stop());
       };
@@ -193,6 +218,14 @@ function Record() {
                 <Textarea rows={5} value={transcript} onChange={(e) => setTranscript(e.target.value)} placeholder="The transcript will appear here" />
               )}
             </div>
+          )}
+          {recording && (
+            <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-secondary" aria-label="Microphone level">
+              <div className="h-full bg-primary transition-[width] duration-75" style={{ width: `${Math.round(level * 100)}%` }} />
+            </div>
+          )}
+          {recording && level < 0.02 && secs >= 3 && (
+            <p className="mt-2 text-sm text-destructive">No sound is reaching the app yet — is your microphone muted?</p>
           )}
           {recording && (
             <div className="mt-4 text-sm text-muted-foreground">
