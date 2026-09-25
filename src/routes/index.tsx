@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
-import heroAsset from "@/assets/memory-lane-hero.png.asset.json";
+import heroAsset from "@/assets/memory-lane-illustration.png.asset.json";
 import { ageOf, childrenOf, generation, partnerOf, people, photos, type Person } from "@/lib/family";
 
 export const Route = createFileRoute("/")({
@@ -87,15 +87,20 @@ function Home() {
 
   return (
     <div>
-      <img
-        src={heroAsset.url}
-        alt="Memory Lane — a family listening to stories together"
-        className="w-full rounded-2xl shadow-lg ring-1 ring-border"
-      />
-      <h1 className="mt-8 font-display text-5xl">Our family</h1>
-      <p className="mt-3 max-w-xl text-muted-foreground">
-        Everyone's stories, from the past and from life today. Tap a person to hear what they've told, or tell a story of your own.
-      </p>
+      <div className="relative overflow-hidden rounded-2xl shadow-lg ring-1 ring-border">
+        <img
+          src={heroAsset.url}
+          alt="A family listening to stories together"
+          className="w-full"
+        />
+        <div className="absolute inset-x-0 top-0 rounded-t-2xl bg-gradient-to-b from-background/95 via-background/70 to-transparent sm:h-60" />
+        <div className="absolute inset-x-3 top-3 rounded-xl bg-background/85 p-4 shadow-sm sm:inset-x-0 sm:top-0 sm:rounded-none sm:bg-transparent sm:p-10 sm:shadow-none">
+          <h1 className="font-display text-3xl text-foreground sm:text-5xl">Our family</h1>
+          <p className="mt-2 max-w-md text-sm text-muted-foreground sm:text-lg">
+            Everyone's stories, from the past and from life today. Tap a person to hear what they've told, or tell a story of your own.
+          </p>
+        </div>
+      </div>
 
       <div className="mt-10 overflow-x-auto pb-6">
         <div className="mx-auto flex min-w-max flex-col items-center px-4">
