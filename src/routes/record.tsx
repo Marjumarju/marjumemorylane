@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { ImagePlus, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ageOf, followUps, generation, people, personById, tellers, topicsFor, type Category, type Subtopic } from "@/lib/family";
@@ -10,6 +11,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { transcribeAudio } from "@/lib/transcribe.functions";
 import { classifyStory, type StoryLabels } from "@/lib/classify.functions";
 import { blobToBase64, pickMime } from "@/lib/audio";
+import { STORY_MEDIA_ACCEPT, uploadStoryMedia, validateStoryMedia } from "@/lib/story-media";
 
 type Search = { teller?: string | undefined; about?: string | undefined };
 
@@ -52,6 +54,9 @@ function Record() {
   const classifyFn = useServerFn(classifyStory);
   const [labels, setLabels] = useState<StoryLabels | null>(null);
   const [askSensitive, setAskSensitive] = useState(false);
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const mediaInput = useRef<HTMLInputElement>(null);
   const rec = useRef<MediaRecorder | null>(null);
   const timer = useRef<number | undefined>(undefined);
   const [level, setLevel] = useState(0);
@@ -66,6 +71,12 @@ function Record() {
   const tellerChoices = search.about ? tellers.filter((p) => ageOf(p) >= 18) : tellers;
 
   useEffect(() => () => window.clearInterval(timer.current), []);
+  useEffect(() => {
+    if (!mediaFile) { setMediaPreview(null); return; }
+    const url = URL.createObjectURL(mediaFile);
+    setMediaPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [mediaFile]);
   useEffect(() => {
     if (!blob) { setPreviewUrl(null); return; }
     const u = URL.createObjectURL(blob);
@@ -165,7 +176,7 @@ function Record() {
       const up = await supabase.storage.from("recordings").upload(audio_path, blob, { contentType: blob.type });
       if (up.error) { setSaving(false); toast.error(up.error.message); return; }
     }
-    const { error } = await supabase.from("stories").insert({
+    const { data: savedStory, error } = await supabase.from("stories").insert({
       storyteller_id: teller.id,
       about_person_id: about?.id ?? teller.id,
       category_id: pick.c.id,
@@ -180,9 +191,16 @@ function Record() {
       mood: marks?.mood ?? null,
       sensitive: marks?.sensitive ?? null,
       labels_provider: marks?.provider ?? null,
-    } as never);
+    } as never).select("id").single();
     setSaving(false);
     if (error) { toast.error(error.message); return; }
+    if (mediaFile && savedStory) {
+      try {
+        await uploadStoryMedia(savedStory.id, mediaFile);
+      } catch (mediaError) {
+        toast.error(mediaError instanceof Error ? `Story saved, but the media wasn't added: ${mediaError.message}` : "Story saved, but the media wasn't added");
+      }
+    }
     await qc.invalidateQueries({ queryKey: ["stories"] });
     toast.success("Story saved. Thank you!");
     nav({ to: "/people/$id", params: { id: about?.id ?? teller.id } });
@@ -267,6 +285,40 @@ function Record() {
           )}
 
           <Textarea className="mt-6" rows={4} placeholder="Add a written note, names, or type the story if you'd rather not record (optional)" value={note} onChange={(e) => setNote(e.target.value)} />
+          <div className="mt-5 border-t border-border pt-5">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Photo or video <span className="normal-case tracking-normal">(optional)</span></p>
+            <input
+              ref={mediaInput}
+              type="file"
+              accept={STORY_MEDIA_ACCEPT}
+              className="sr-only"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                try { validateStoryMedia(file); setMediaFile(file); }
+                catch (error) { toast.error(error instanceof Error ? error.message : "Choose another file"); }
+                event.target.value = "";
+              }}
+            />
+            {mediaPreview ? (
+              <div className="mt-3 max-w-md">
+                {mediaFile?.type.startsWith("image/") ? (
+                  <img src={mediaPreview} alt="Story attachment preview" className="max-h-72 w-full rounded-md object-cover" />
+                ) : (
+                  <video src={mediaPreview} controls className="max-h-72 w-full rounded-md bg-foreground" />
+                )}
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <p className="truncate text-xs text-muted-foreground">{mediaFile?.name}</p>
+                  <Button type="button" size="sm" variant="ghost" onClick={() => setMediaFile(null)}><X className="h-4 w-4" /> Remove</Button>
+                </div>
+              </div>
+            ) : (
+              <Button type="button" variant="outline" className="mt-3" onClick={() => mediaInput.current?.click()}>
+                <ImagePlus className="h-4 w-4" /> Add a photo or short video
+              </Button>
+            )}
+            <p className="mt-2 text-xs text-muted-foreground">One photo or video clip, up to 25 MB. You can change it later.</p>
+          </div>
           {askSensitive && (
             <div className="mt-4 rounded-xl border border-destructive/40 bg-destructive/5 p-4">
               <p className="text-sm">

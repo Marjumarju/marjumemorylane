@@ -10,26 +10,30 @@ import { Button } from "@/components/ui/button";
 import { useServerFn } from "@tanstack/react-start";
 import { transcribeAudio } from "@/lib/transcribe.functions";
 import { blobToBase64 } from "@/lib/audio";
+import { StoryMedia } from "@/components/StoryMedia";
 
-export function StoryCard({ story }: { story: Story }) {
+export function StoryCard({ story, hideTopic = false }: { story: Story; hideTopic?: boolean }) {
   const teller = personById(story.storyteller_id);
   const about = story.about_person_id && story.about_person_id !== story.storyteller_id ? personById(story.about_person_id) : null;
   const sub = subtopicById(story.category_id, story.subtopic_id);
   const queryClient = useQueryClient();
   const [confirming, setConfirming] = useState(false);
+  const audioPath = story.audio_path;
+  const media = story.story_media?.[0] ?? null;
   const url = useQuery({
-    queryKey: ["audio", story.audio_path],
-    queryFn: () => audioUrl(story.audio_path!),
-    enabled: !!story.audio_path,
+    queryKey: ["audio", audioPath],
+    queryFn: () => audioUrl(audioPath ?? ""),
+    enabled: !!audioPath,
     staleTime: 30 * 60_000,
   });
   const transcribeFn = useServerFn(transcribeAudio);
   const transcript = (story as { transcript?: string | null }).transcript;
   const tx = useMutation({
     mutationFn: async () => {
-      const { data: file, error } = await supabase.storage.from("recordings").download(story.audio_path!);
+      if (!audioPath) throw new Error("This story has no recording");
+      const { data: file, error } = await supabase.storage.from("recordings").download(audioPath);
       if (error || !file) throw new Error("Couldn't load the recording");
-      const mime = file.type || (story.audio_path!.endsWith(".m4a") ? "audio/mp4" : "audio/webm");
+      const mime = file.type || (audioPath.endsWith(".m4a") ? "audio/mp4" : "audio/webm");
       const r = await transcribeFn({ data: { audio: await blobToBase64(file), mime } });
       const up = await supabase.from("stories").update({ transcript: r.text } as never).eq("id", story.id);
       if (up.error) throw up.error;
@@ -39,8 +43,12 @@ export function StoryCard({ story }: { story: Story }) {
   });
   const del = useMutation({
     mutationFn: async () => {
-      if (story.audio_path) {
-        const { error } = await supabase.storage.from("recordings").remove([story.audio_path]);
+      if (media) {
+        const { error } = await supabase.storage.from("story-media").remove([media.storage_path]);
+        if (error) throw error;
+      }
+      if (audioPath) {
+        const { error } = await supabase.storage.from("recordings").remove([audioPath]);
         if (error) throw error;
       }
       const { error } = await supabase.from("stories").delete().eq("id", story.id);
@@ -57,7 +65,8 @@ export function StoryCard({ story }: { story: Story }) {
     <article className="rounded-lg border border-border bg-card p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">
-          {categoryById(story.category_id)?.title} · {sub?.title}
+          {!hideTopic && <>{categoryById(story.category_id)?.title} · {sub?.title}</>}
+          {hideTopic && sub?.shared && <>Shared memory</>}
           {sub?.shared && <span className="ml-2 rounded bg-accent px-1.5 py-0.5 text-accent-foreground normal-case tracking-normal">shared memory</span>}
         </div>
         {!confirming ? (
@@ -87,6 +96,7 @@ export function StoryCard({ story }: { story: Story }) {
         {about && <> about <Link to="/people/$id" params={{ id: about.id }} className="text-primary hover:underline">{about.name}</Link></>}
         {" · "}{new Date(story.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
       </div>
+      <StoryMedia storyId={story.id} media={media} />
       {url.data && <audio controls src={url.data} className="mt-4 w-full" />}
       {transcript && <p className="mt-3 whitespace-pre-line text-sm leading-relaxed">{transcript}</p>}
       {story.audio_path && !transcript && (
