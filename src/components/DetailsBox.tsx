@@ -40,7 +40,13 @@ export function DetailsBox({ id, name }: { id: string; name: string }) {
     <div className="mt-4 flex flex-wrap items-start gap-x-6 gap-y-2 text-sm">
       <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" />{d?.city ? <>Lives in <span className="font-medium">{d.city}</span></> : <span className="text-muted-foreground">City not added</span>}</div>
       <div className="flex items-start gap-2"><GraduationCap className="mt-0.5 h-4 w-4 text-primary" />
-        {d?.studies.length ? <span>Studied {d.studies.map((s) => [s.what, s.where].filter(Boolean).join(" at ")).join("; ")}</span> : <span className="text-muted-foreground">Studies not added</span>}
+        {d?.studies.length ? (
+          <span>Studied {d.studies.map((s) => {
+            const years = studyYears(s);
+            const span = spanLabel(s.from_year, s.to_year);
+            return [s.what, s.where].filter(Boolean).join(" at ") + (years ? ` (${years}${span ? `, ${span}` : ""})` : "");
+          }).join("; ")}</span>
+        ) : <span className="text-muted-foreground">Studies not added</span>}
       </div>
       <button type="button" onClick={start} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"><Pencil className="h-3 w-3" /> Edit details</button>
 
