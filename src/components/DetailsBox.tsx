@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GraduationCap, MapPin, Pencil, Plus, X } from "lucide-react";
 import { toast } from "sonner";
-import { detailsQuery, saveDetails, type Study } from "@/lib/details";
+import { detailsQuery, saveDetails, studyYears, spanLabel, type Study } from "@/lib/details";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
