@@ -61,6 +61,13 @@
         "tells_stories": "self"
       },
       {
+        "id": "marie",
+        "name": "Marie",
+        "birth_year": 1992,
+        "parents": [],
+        "tells_stories": "self"
+      },
+      {
         "id": "martin",
         "name": "Martin",
         "parents": [],
@@ -154,6 +161,13 @@
         "partners": [
           "liis",
           "mathis"
+        ],
+        "type": "married"
+      },
+      {
+        "partners": [
+          "tanel",
+          "marie"
         ],
         "type": "married"
       }
