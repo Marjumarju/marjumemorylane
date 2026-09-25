@@ -1,10 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Mic, Users } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { BookOpen, Loader2, Mic, Users } from "lucide-react";
+import { useState } from "react";
 import { categories, people, personById } from "@/lib/family";
 import { storiesQuery } from "@/lib/stories";
 import { StoryCard } from "@/components/StoryCard";
 import { PatternsBox } from "@/components/PatternsBox";
+import { Button } from "@/components/ui/button";
+import { generateFamilyHistory } from "@/lib/family-history.functions";
 
 type Search = { person?: string | undefined; category?: string | undefined };
 
@@ -38,6 +42,23 @@ function Browse() {
   const filtered = !!(person || category);
   const tellerCount = new Set(stories.map((s) => s.storyteller_id)).size;
   const latest = stories[0];
+  const [familyHistory, setFamilyHistory] = useState<string | null>(null);
+  const [familyHistoryError, setFamilyHistoryError] = useState<string | null>(null);
+  const [familyHistoryLoading, setFamilyHistoryLoading] = useState(false);
+  const generateHistory = useServerFn(generateFamilyHistory);
+
+  const handleCreateFamilyHistory = async () => {
+    setFamilyHistoryLoading(true);
+    setFamilyHistoryError(null);
+    try {
+      const result = await generateHistory({ data: {} });
+      setFamilyHistory(result.story);
+    } catch (error) {
+      setFamilyHistoryError(error instanceof Error ? error.message : "We couldn't create a family history story right now.");
+    } finally {
+      setFamilyHistoryLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -93,6 +114,27 @@ function Browse() {
           );
         })}
       </div>
+
+      <div className="mt-6 flex justify-start">
+        <Button type="button" variant="outline" onClick={handleCreateFamilyHistory} disabled={familyHistoryLoading} className="min-w-64">
+          {familyHistoryLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Writing the family story…
+            </>
+          ) : (
+            "..or create a stores about family"
+          )}
+        </Button>
+      </div>
+
+      {familyHistoryError && <p className="mt-3 text-sm text-destructive">{familyHistoryError}</p>}
+      {familyHistory && (
+        <div className="mt-6 rounded-xl border border-border bg-card p-5">
+          <h3 className="font-display text-2xl">Family history</h3>
+          <div className="mt-3 space-y-4 text-sm leading-relaxed text-foreground whitespace-pre-line">{familyHistory}</div>
+        </div>
+      )}
 
       {/* Person filter + results */}
       <div className="mt-10 flex flex-wrap items-center gap-3">

@@ -6,6 +6,42 @@ import type { Database } from "@/integrations/supabase/types";
 
 /** Streams a Responses call and returns the final text. */
 export async function askAi(prompt: string): Promise<string> {
+  const openAiKey = process.env["OPENAI_API_KEY"];
+  if (openAiKey) {
+    const res = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openAiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        input: prompt,
+      }),
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      console.error(`OpenAI generation failed [${res.status}]: ${body}`);
+      throw new Error("OpenAI is not available right now. Try again in a moment.");
+    }
+    const json = (await res.json()) as {
+      output_text?: string;
+      output?: Array<{ content?: Array<{ text?: string | { value?: string } }> }>;
+    };
+    const text =
+      typeof json.output_text === "string"
+        ? json.output_text
+        : (json.output ?? [])
+            .flatMap((item) => item.content ?? [])
+            .map((part) => {
+              if (typeof part.text === "string") return part.text;
+              if (part.text && typeof part.text === "object" && typeof part.text.value === "string") return part.text.value;
+              return "";
+            })
+            .join("");
+    return text.trim();
+  }
+
   const key = process.env["LOVABLE_API_KEY"];
   if (!key) throw new Error("AI isn't set up yet.");
   const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
