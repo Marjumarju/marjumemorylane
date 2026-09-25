@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
+import heroAsset from "@/assets/memory-lane-hero.png.asset.json";
 import { ageOf, childrenOf, generation, partnerOf, people, photos, type Person } from "@/lib/family";
 
 export const Route = createFileRoute("/")({
@@ -86,7 +87,12 @@ function Home() {
 
   return (
     <div>
-      <h1 className="font-display text-5xl">Our family</h1>
+      <img
+        src={heroAsset.url}
+        alt="Memory Lane — a family listening to stories together"
+        className="w-full rounded-2xl shadow-lg ring-1 ring-border"
+      />
+      <h1 className="mt-8 font-display text-5xl">Our family</h1>
       <p className="mt-3 max-w-xl text-muted-foreground">
         Everyone's stories, from the past and from life today. Tap a person to hear what they've told, or tell a story of your own.
       </p>
