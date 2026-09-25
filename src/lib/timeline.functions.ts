@@ -34,13 +34,14 @@ export const extractTimeline = createServerFn({ method: "POST" })
     ].filter(Boolean).join("\n\n");
 
     const raw = await askAi(prompt);
-    let events: { year: number | null; label: string; place: string | null; story_id: string | null }[] = [];
+    let events: { year: number | null; end_year: number | null; label: string; place: string | null; story_id: string | null }[] = [];
     try {
       const s = raw.slice(raw.indexOf("["), raw.lastIndexOf("]") + 1);
       const ids = new Set((stories ?? []).map((x) => x.id));
-      events = (JSON.parse(s) as { year?: unknown; label?: unknown; place?: unknown; story_id?: unknown }[])
+      events = (JSON.parse(s) as { year?: unknown; end_year?: unknown; label?: unknown; place?: unknown; story_id?: unknown }[])
         .map((e) => ({
           year: Number.isInteger(e.year) ? (e.year as number) : null,
+          end_year: Number.isInteger(e.end_year) ? (e.end_year as number) : null,
           label: String(e.label ?? "").trim().slice(0, 200),
           place: e.place ? String(e.place).slice(0, 100) : null,
           story_id: typeof e.story_id === "string" && ids.has(e.story_id) ? e.story_id : null,
