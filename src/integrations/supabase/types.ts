@@ -38,6 +38,7 @@ export type Database = {
       person_timeline: {
         Row: {
           created_at: string
+          end_year: number | null
           id: string
           label: string
           person_id: string
@@ -48,6 +49,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          end_year?: number | null
           id?: string
           label: string
           person_id: string
@@ -58,6 +60,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          end_year?: number | null
           id?: string
           label?: string
           person_id?: string
