@@ -107,7 +107,12 @@ export function TimelineBox({ id, name }: { id: string; name: string }) {
           <DialogHeader><DialogTitle>{edit?.id ? "Edit event" : "Add event"}</DialogTitle></DialogHeader>
           {edit && (
             <div className="grid gap-3">
-              <Input type="number" placeholder="Year" value={edit.year ?? ""} onChange={(e) => setEdit({ ...edit, year: e.target.value ? Number(e.target.value) : null })} />
+              <div className="flex items-center gap-2">
+                <Input type="number" placeholder="Year" value={edit.year ?? ""} onChange={(e) => setEdit({ ...edit, year: e.target.value ? Number(e.target.value) : null })} />
+                <span className="text-muted-foreground">–</span>
+                <Input type="number" placeholder="Until (optional)" value={edit.end_year ?? ""} onChange={(e) => setEdit({ ...edit, end_year: e.target.value ? Number(e.target.value) : null })} />
+              </div>
+              <p className="-mt-2 text-xs text-muted-foreground">{howLong(edit) || "Leave the second year empty for a one-off event."}</p>
               <Input placeholder="What happened (e.g. Moved to Lisbon)" value={edit.label} onChange={(e) => setEdit({ ...edit, label: e.target.value })} />
               <Input placeholder="Place (optional)" value={edit.place ?? ""} onChange={(e) => setEdit({ ...edit, place: e.target.value })} />
             </div>
