@@ -247,13 +247,14 @@ function Record() {
           ) : (
           <div className="rounded-xl bg-secondary p-6">
             <p className="font-display text-2xl leading-snug">{question}</p>
-            {pick.s.shared && (
+            {pick?.s.shared && (
               <p className="mt-3 text-sm text-muted-foreground">This is a shared memory. Tell your own version, the way you remember it. Try not to listen to anyone else's first.</p>
             )}
             {!recording && !blob && (
               <button className="mt-4 text-sm text-primary underline underline-offset-4" onClick={() => ask(pick.c)}>Give me another question</button>
             )}
           </div>
+          )}
 
           <div className="mt-6 flex items-center gap-4">
             {!recording ? (
