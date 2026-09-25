@@ -29,6 +29,13 @@
       "when": 1790338954876,
       "tag": "0003_person_details",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790340729978,
+      "tag": "0004_person_timeline",
+      "breakpoints": true
     }
   ]
 }
