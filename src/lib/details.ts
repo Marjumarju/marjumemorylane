@@ -2,7 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export type Study = { what: string; where: string; from_year?: number | null; to_year?: number | null };
-export type PersonDetails = { person_id: string; city: string | null; studies: Study[]; updated_at: string };
+export type PersonDetails = { person_id: string; city: string | null; birth_place: string | null; studies: Study[]; updated_at: string };
 
 export const detailsQuery = queryOptions({
   queryKey: ["person_details"],
@@ -29,10 +29,11 @@ export function spanLabel(from?: number | null, to?: number | null) {
   return n <= 0 ? "" : `${n} ${n === 1 ? "year" : "years"}`;
 }
 
-export async function saveDetails(personId: string, city: string, studies: Study[]) {
+export async function saveDetails(personId: string, city: string, studies: Study[], birthPlace = "") {
   const { error } = await supabase.from("person_details").upsert({
     person_id: personId,
     city: city.trim().slice(0, 100) || null,
+    birth_place: birthPlace.trim().slice(0, 100) || null,
     studies: studies
       .map((s) => ({ what: s.what.trim().slice(0, 150), where: s.where.trim().slice(0, 150), from_year: yr(s.from_year), to_year: yr(s.to_year) }))
       .filter((s) => s.what || s.where),

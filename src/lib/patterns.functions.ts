@@ -29,7 +29,7 @@ export const getPatterns = createServerFn({ method: "GET" })
     });
     const [{ data: rows }, { data: dets }] = await Promise.all([
       supabase.from("stories").select("storyteller_id, about_person_id, category_id, question, transcript, note").order("created_at", { ascending: false }).limit(80),
-      supabase.from("person_details").select("person_id, city, studies"),
+      supabase.from("person_details").select("person_id, city, birth_place, studies"),
     ]);
     const stories = rows ?? [];
     if (stories.length < 2) return { threads: [], connections: [], generations: "", enough: false };
@@ -37,7 +37,7 @@ export const getPatterns = createServerFn({ method: "GET" })
     const peopleLines = people.map((p) => {
       const d = dets?.find((x) => x.person_id === p.id);
       const st = ((d?.studies as { what?: string; where?: string }[] | null) ?? []).map((s) => [s.what, s.where].filter(Boolean).join(" at ")).join("; ");
-      return `${p.id}: ${p.name}, born ${p.birth_year}, generation ${generation(p)}${d?.city ? `, lives in ${d.city}` : ""}${st ? `, studied ${st}` : ""}`;
+      return `${p.id}: ${p.name}, born ${p.birth_year}${d?.birth_place ? ` in ${d.birth_place}` : ""}, generation ${generation(p)}${d?.city ? `, lives in ${d.city}` : ""}${st ? `, studied ${st}` : ""}`;
     });
     const storyLines = stories.map((s) => {
       const cat = categories.find((c) => c.id === s.category_id)?.title ?? s.category_id;

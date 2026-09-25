@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { GraduationCap, MapPin, Pencil, Plus, X } from "lucide-react";
+import { Baby, GraduationCap, MapPin, Pencil, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { detailsQuery, saveDetails, studyYears, spanLabel, type Study } from "@/lib/details";
 import { Button } from "@/components/ui/button";
@@ -13,18 +13,20 @@ export function DetailsBox({ id, name }: { id: string; name: string }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [city, setCity] = useState("");
+  const [birthPlace, setBirthPlace] = useState("");
   const [studies, setStudies] = useState<Study[]>([]);
   const [saving, setSaving] = useState(false);
 
   const start = () => {
     setCity(d?.city ?? "");
+    setBirthPlace(d?.birth_place ?? "");
     setStudies(d?.studies.length ? d.studies : [{ what: "", where: "" }]);
     setOpen(true);
   };
   const save = async () => {
     setSaving(true);
     try {
-      await saveDetails(id, city, studies);
+      await saveDetails(id, city, studies, birthPlace);
       await qc.invalidateQueries({ queryKey: ["person_details"] });
       qc.invalidateQueries({ queryKey: ["about", id] });
       setOpen(false);
@@ -38,6 +40,7 @@ export function DetailsBox({ id, name }: { id: string; name: string }) {
 
   return (
     <div className="mt-4 flex flex-wrap items-start gap-x-6 gap-y-2 text-sm">
+      <div className="flex items-center gap-2"><Baby className="h-4 w-4 text-primary" />{d?.birth_place ? <>Born in <span className="font-medium">{d.birth_place}</span></> : <span className="text-muted-foreground">Birthplace not added</span>}</div>
       <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" />{d?.city ? <>Lives in <span className="font-medium">{d.city}</span></> : <span className="text-muted-foreground">City not added</span>}</div>
       <div className="flex items-start gap-2"><GraduationCap className="mt-0.5 h-4 w-4 text-primary" />
         {d?.studies.length ? (
@@ -53,7 +56,9 @@ export function DetailsBox({ id, name }: { id: string; name: string }) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader><DialogTitle>{name}'s details</DialogTitle></DialogHeader>
-          <label className="text-sm font-medium">Lives in (city)</label>
+          <label className="text-sm font-medium">Born in (place of birth)</label>
+          <Input value={birthPlace} maxLength={100} onChange={(e) => setBirthPlace(e.target.value)} placeholder="e.g. Tartu" />
+          <label className="mt-2 text-sm font-medium">Lives in (city)</label>
           <Input value={city} maxLength={100} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Tallinn" />
           <label className="mt-2 text-sm font-medium">Studied</label>
           {studies.map((s, i) => {

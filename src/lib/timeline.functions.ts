@@ -13,7 +13,7 @@ export const extractTimeline = createServerFn({ method: "POST" })
     const sb = publicClient();
     const [{ data: stories }, { data: det }, { data: existing }] = await Promise.all([
       sb.from("stories").select("id, question, transcript, note, title").or(`storyteller_id.eq.${p.id},about_person_id.eq.${p.id}`).limit(40),
-      sb.from("person_details").select("city, studies").eq("person_id", p.id).maybeSingle(),
+      sb.from("person_details").select("city, birth_place, studies").eq("person_id", p.id).maybeSingle(),
       sb.from("person_timeline").select("year, label").eq("person_id", p.id),
     ]);
     const studies = ((det?.studies as { what?: string; where?: string; from_year?: number | null; to_year?: number | null }[] | null) ?? []).map((s) => {
@@ -27,6 +27,7 @@ export const extractTimeline = createServerFn({ method: "POST" })
       `ONLY major life milestones: birth, moving to a new city or country, starting or finishing studies, starting a significant job or career change, marriage, birth of a child, a life-changing event. At most 6 events in total.`,
       `Do NOT include holidays, trips, hobbies, everyday anecdotes, feelings, or small moments from stories. If a story holds no milestone, return nothing for it. Short labels. Never invent facts or years; estimate only when clearly implied.`,
       `Always include "Born" with year ${p.birth_year}.`,
+      det?.birth_place ? `Born in ${det.birth_place}.` : "",
       det?.city ? `Lives now in ${det.city}.` : "",
       studies.length ? `Studies: ${studies.join("; ")}` : "",
       `Already on the timeline (do NOT repeat): ${(existing ?? []).map((e) => `${e.year ?? "?"} ${e.label}`).join("; ") || "nothing"}`,
