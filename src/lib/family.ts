@@ -6,6 +6,7 @@ import enePhoto from "@/assets/ene.png.asset.json";
 import liisPhoto from "@/assets/liis.png.asset.json";
 import jaanikaPhoto from "@/assets/jaanika.png.asset.json";
 import martinPhoto from "@/assets/martin.png.asset.json";
+import tanelPhoto from "@/assets/tanel.png.asset.json";
 
 export type Person = {
   id: string;
