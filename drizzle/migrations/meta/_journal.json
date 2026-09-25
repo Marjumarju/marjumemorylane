@@ -22,6 +22,13 @@
       "when": 1790336276365,
       "tag": "0002_allow_anon_delete_stories",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790338954876,
+      "tag": "0003_person_details",
+      "breakpoints": true
     }
   ]
 }

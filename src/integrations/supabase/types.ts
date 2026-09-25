@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      person_details: {
+        Row: {
+          city: string | null
+          person_id: string
+          studies: Json
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          person_id: string
+          studies?: Json
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          person_id?: string
+          studies?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       stories: {
         Row: {
           about_person_id: string | null
