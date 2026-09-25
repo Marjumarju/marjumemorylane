@@ -1,0 +1,828 @@
+{
+  "app": "Memory Lane: a family storybank",
+  "purpose": "Collect everyone's stories, from the past and from life today, told in their own voice. Anyone in the family can tell stories, add their own version of a shared memory, or tell stories about the little ones.",
+  "language": "English",
+  "family_tree": {
+    "people": [
+      {
+        "id": "ene",
+        "name": "Ene",
+        "birth_year": 1957,
+        "role": "mother",
+        "parents": [],
+        "tells_stories": "self"
+      },
+      {
+        "id": "kalmer",
+        "name": "Kalmer",
+        "birth_year": 1958,
+        "role": "father",
+        "parents": [],
+        "tells_stories": "self"
+      },
+      {
+        "id": "jaanika",
+        "name": "Jaanika",
+        "birth_year": 1984,
+        "parents": [
+          "ene",
+          "kalmer"
+        ],
+        "tells_stories": "self"
+      },
+      {
+        "id": "marju",
+        "name": "Marju",
+        "birth_year": 1985,
+        "parents": [
+          "ene",
+          "kalmer"
+        ],
+        "tells_stories": "self"
+      },
+      {
+        "id": "liis",
+        "name": "Liis",
+        "birth_year": 1988,
+        "parents": [
+          "ene",
+          "kalmer"
+        ],
+        "tells_stories": "self"
+      },
+      {
+        "id": "tanel",
+        "name": "Tanel",
+        "birth_year": 1992,
+        "parents": [
+          "ene",
+          "kalmer"
+        ],
+        "tells_stories": "self"
+      },
+      {
+        "id": "martin",
+        "name": "Martin",
+        "parents": [],
+        "birth_year": 1989,
+        "tells_stories": "self"
+      },
+      {
+        "id": "mathis",
+        "name": "Mathis",
+        "parents": [],
+        "birth_year": 1989,
+        "tells_stories": "self"
+      },
+      {
+        "id": "liv",
+        "name": "Liv",
+        "age": 6,
+        "age_as_of": "2026-09",
+        "parents": [
+          "jaanika",
+          "martin"
+        ],
+        "birth_year": 2020,
+        "tells_stories": "told_by_family"
+      },
+      {
+        "id": "iris",
+        "name": "Iris",
+        "age": 4,
+        "age_as_of": "2026-09",
+        "parents": [
+          "jaanika",
+          "martin"
+        ],
+        "birth_year": 2022,
+        "tells_stories": "told_by_family"
+      },
+      {
+        "id": "artur",
+        "name": "Artur",
+        "age": 2,
+        "age_as_of": "2026-09",
+        "parents": [
+          "jaanika",
+          "martin"
+        ],
+        "birth_year": 2024,
+        "tells_stories": "told_by_family"
+      },
+      {
+        "id": "lili_marleen",
+        "name": "Lili-Marleen",
+        "age": 12,
+        "age_as_of": "2026-09",
+        "parents": [
+          "liis",
+          "mathis"
+        ],
+        "birth_year": 2014,
+        "tells_stories": "self"
+      },
+      {
+        "id": "elisabeth",
+        "name": "Elisabeth",
+        "age": 8,
+        "age_as_of": "2026-09",
+        "parents": [
+          "liis",
+          "mathis"
+        ],
+        "birth_year": 2018,
+        "tells_stories": "with_help"
+      }
+    ],
+    "partnerships": [
+      {
+        "partners": [
+          "ene",
+          "kalmer"
+        ],
+        "type": "married"
+      },
+      {
+        "partners": [
+          "jaanika",
+          "martin"
+        ],
+        "type": "partners"
+      },
+      {
+        "partners": [
+          "liis",
+          "mathis"
+        ],
+        "type": "married"
+      }
+    ],
+    "note": "Grandchildren's birth years are placeholders calculated from their ages, assuming birthdays have passed by September 2026."
+  },
+  "question_rules": [
+    "The goal is stories, not facts. Every question should open a scene the person can walk into.",
+    "Anchor each question in something concrete: a specific day, place, object, smell, person or 'first time'.",
+    "Use superlatives and extremes: the best, worst, funniest, strangest, most daring, biggest disaster.",
+    "Invite mischief and surprise: getting into trouble, breaking rules, secrets, things the kids never knew.",
+    "Avoid generic phrasing like 'What was X like?' or 'Tell me about your childhood'.",
+    "Ask one open-ended question at a time, never yes/no, short enough to read on a phone.",
+    "Keep the tone warm and playful, never interrogating.",
+    "For subtopics where shared is true, invite everyone who was there to tell their own version separately, so no one hears another version first.",
+    "Follow up on names, places and objects from earlier answers.",
+    "Ask about beliefs, religion, politics and activism gently and with curiosity, never judgement, and always make it easy to skip.",
+    "Do not open painful topics (loss, illness, hard times) unless the parent raises them first; then let them lead.",
+    "Never invent facts about the family; only use what has been recorded.",
+    "When a relative is mentioned by name, follow the tree_expansion rules.",
+    "Only ask questions whose 'who' fits the storyteller: their generation, age, whether they are a parent, partner or grandparent.",
+    "Adapt wording to the storyteller's generation and life: a question about youth sounds different for someone born in 1957 and in 1992.",
+    "For children, keep questions short, concrete and fun. Children under 8 don't record themselves; family members tell stories about them."
+  ],
+  "categories": [
+    {
+      "id": "roots",
+      "title": "Roots",
+      "description": "Parents, grandparents and where the family comes from.",
+      "subtopics": [
+        {
+          "id": "grandparents",
+          "title": "Their parents and grandparents",
+          "shared": false,
+          "example_question": "Which grandparent could you get away with anything with, and what did you get away with?"
+        },
+        {
+          "id": "origins",
+          "title": "Where the family comes from",
+          "shared": false,
+          "example_question": "If you took me to the place your family comes from, what would you point at first, and what story comes with it?"
+        },
+        {
+          "id": "family_tales",
+          "title": "Stories they heard as children",
+          "shared": false,
+          "example_question": "Which family story got told at every gathering, and do you think it's actually true?"
+        },
+        {
+          "id": "heirlooms",
+          "title": "Family objects and photos",
+          "shared": false,
+          "example_question": "Which object in the family has a story that's bigger than the object itself?"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "childhood",
+      "title": "Childhood",
+      "description": "Growing up, whenever that was.",
+      "subtopics": [
+        {
+          "id": "childhood_home",
+          "title": "The home they grew up in",
+          "shared": false,
+          "example_question": "What was the best hiding place in the house you grew up in, and who were you hiding from?"
+        },
+        {
+          "id": "games_friends",
+          "title": "Games, toys and friends",
+          "shared": false,
+          "example_question": "What's the most trouble you and your friends ever got into?"
+        },
+        {
+          "id": "school",
+          "title": "School and teachers",
+          "shared": false,
+          "example_question": "Which teacher did everyone have a nickname for, and what was it?"
+        },
+        {
+          "id": "summers_chores",
+          "title": "Summers, food and chores",
+          "shared": false,
+          "example_question": "Which chore did you hate so much you tried to get out of it, and how?"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "youth",
+      "title": "Youth",
+      "description": "Teenage years and young adulthood.",
+      "subtopics": [
+        {
+          "id": "teen_friends",
+          "title": "Friends and hangouts",
+          "shared": false,
+          "example_question": "Where did you go when you didn't want your parents to know where you were?"
+        },
+        {
+          "id": "music_fashion",
+          "title": "Music, dances, films and fashion",
+          "shared": false,
+          "example_question": "What's the most daring thing you ever wore, and how did you get hold of it?"
+        },
+        {
+          "id": "studies_first_job",
+          "title": "Studies and first job",
+          "shared": false,
+          "example_question": "What was the first thing you bought with your own money?"
+        },
+        {
+          "id": "young_dreams",
+          "title": "Dreams for the future",
+          "shared": false,
+          "example_question": "At twenty, what did you secretly want to become that nobody knew about?"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "values",
+      "title": "Values and Beliefs",
+      "description": "How they were raised, what they believed in and what they stood for.",
+      "subtopics": [
+        {
+          "id": "upbringing",
+          "title": "How they were brought up",
+          "shared": false,
+          "example_question": "What was the one thing you were absolutely not allowed to do as a child, and did you do it anyway?"
+        },
+        {
+          "id": "traditional_values",
+          "title": "Traditional or modern values",
+          "shared": false,
+          "example_question": "Which family rule seemed perfectly normal back then but would sound strange today?"
+        },
+        {
+          "id": "parents_faith",
+          "title": "Their parents' faith and beliefs",
+          "shared": false,
+          "example_question": "Did anyone in your family pray, go to church or keep something hidden that had to do with faith?"
+        },
+        {
+          "id": "own_beliefs",
+          "title": "Their own beliefs",
+          "shared": false,
+          "example_question": "Is there something you believe in that might surprise your children?"
+        },
+        {
+          "id": "subcultures",
+          "title": "Youth scenes and subcultures",
+          "shared": false,
+          "example_question": "What music did you listen to that you weren't supposed to, and how did you get it?"
+        },
+        {
+          "id": "activism",
+          "title": "Activism and standing up for things",
+          "shared": false,
+          "example_question": "Was there a moment you stood up for something, even though you knew it could get you into trouble?"
+        },
+        {
+          "id": "values_passed_on",
+          "title": "Values they wanted to pass on",
+          "shared": true,
+          "example_question": "What did you say to your children so often that they could probably say it for you?",
+          "who": "parents"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "love",
+      "title": "Love and Partnership",
+      "description": "How couples in the family found each other and built a life together.",
+      "subtopics": [
+        {
+          "id": "how_we_met",
+          "title": "How they met",
+          "shared": true,
+          "example_question": "Where exactly were you when you first saw your partner, and what went through your head?"
+        },
+        {
+          "id": "first_dates",
+          "title": "First dates and falling in love",
+          "shared": true,
+          "example_question": "What happened on your first date that you've never quite forgotten?"
+        },
+        {
+          "id": "wedding",
+          "title": "The wedding",
+          "shared": true,
+          "example_question": "What went wrong, or almost went wrong, on your wedding day?"
+        },
+        {
+          "id": "first_home_together",
+          "title": "Their first shared home",
+          "shared": true,
+          "example_question": "What was the strangest or funniest thing about your first home together?"
+        },
+        {
+          "id": "together",
+          "title": "What kept them together",
+          "shared": false,
+          "example_question": "What's the silliest thing you two ever argued about?",
+          "who": "couples"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "parenthood",
+      "title": "Parents and Grandparents",
+      "description": "Raising children, and for Ene and Kalmer, being grandparents to five.",
+      "subtopics": [
+        {
+          "id": "births",
+          "title": "The birth of each child",
+          "shared": true,
+          "example_question": "Tell me about the day one of your children was born, starting from the moment you realised it was time."
+        },
+        {
+          "id": "everyday_family",
+          "title": "Everyday life with four children",
+          "shared": true,
+          "example_question": "What did mornings look like when you were trying to get the kids out of the door?"
+        },
+        {
+          "id": "funny_moments",
+          "title": "Funny moments and family sayings",
+          "shared": true,
+          "example_question": "What's the naughtiest thing one of the kids did that you secretly found funny?"
+        },
+        {
+          "id": "pride_worries",
+          "title": "Proud moments and worries",
+          "shared": false,
+          "example_question": "What's the biggest scare one of the kids ever gave you?"
+        },
+        {
+          "id": "grandparenting",
+          "title": "Being grandparents",
+          "shared": true,
+          "example_question": "What's something you let the grandchildren do that you never let your own kids do?",
+          "who": "grandparents"
+        },
+        {
+          "id": "grandchild_moments",
+          "title": "Grandchildren moments",
+          "shared": true,
+          "example_question": "What's the funniest thing one of the grandchildren has ever said to you?",
+          "who": "grandparents"
+        }
+      ],
+      "who": "parents"
+    },
+    {
+      "id": "homes",
+      "title": "Homes",
+      "description": "Every place they have called home.",
+      "subtopics": [
+        {
+          "id": "all_homes",
+          "title": "Every home they have lived in",
+          "shared": false,
+          "example_question": "Which home had the strangest quirk: a creaky door, a noisy neighbour, a stove with a mind of its own?"
+        },
+        {
+          "id": "garden_countryside",
+          "title": "Garden, summer house and countryside",
+          "shared": false,
+          "example_question": "What in the garden were you proudest of, and what always failed no matter what you did?"
+        },
+        {
+          "id": "neighbours",
+          "title": "Neighbours and community",
+          "shared": false,
+          "example_question": "Which neighbour could you tell stories about for hours?"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "work",
+      "title": "Work",
+      "description": "Professions, workplaces and working life.",
+      "subtopics": [
+        {
+          "id": "profession",
+          "title": "Training and profession",
+          "shared": false,
+          "example_question": "How did you really end up in your profession: was it a plan or an accident?"
+        },
+        {
+          "id": "workplaces",
+          "title": "Workplaces and colleagues",
+          "shared": false,
+          "example_question": "Which colleague do you still tell stories about, and why?"
+        },
+        {
+          "id": "highs_lows",
+          "title": "Proudest achievement, hardest period",
+          "shared": false,
+          "example_question": "What's the funniest or strangest thing that ever happened to you at work?"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "history",
+      "title": "Times and History",
+      "description": "Living through big changes in Estonia, for those who remember them.",
+      "subtopics": [
+        {
+          "id": "soviet_everyday",
+          "title": "Everyday life in Soviet times",
+          "shared": false,
+          "example_question": "What's the longest you ever queued for something, and was it worth it?"
+        },
+        {
+          "id": "singing_revolution",
+          "title": "The Singing Revolution and the Baltic Chain",
+          "shared": true,
+          "example_question": "Where were you on the day of the Baltic Chain, and what do you remember seeing or hearing?"
+        },
+        {
+          "id": "independence",
+          "title": "Independence in 1991",
+          "shared": true,
+          "example_question": "What did you do on the day you realised Estonia would be free?"
+        },
+        {
+          "id": "nineties",
+          "title": "The 1990s: new money, new jobs, big changes",
+          "shared": false,
+          "example_question": "What was the first thing you bought with Estonian kroons?",
+          "who": "adults"
+        }
+      ],
+      "who": "remember_soviet_times"
+    },
+    {
+      "id": "food",
+      "title": "Food and Kitchen",
+      "description": "Who cooked, what was on the table and the dishes the family is known for.",
+      "subtopics": [
+        {
+          "id": "childhood_cook",
+          "title": "Who cooked in their childhood home",
+          "shared": false,
+          "example_question": "What did the kitchen of your childhood smell like on a Saturday?"
+        },
+        {
+          "id": "family_cook",
+          "title": "Who cooked in their own family",
+          "shared": true,
+          "example_question": "Who really ran the kitchen in our family, and who only thought they did?"
+        },
+        {
+          "id": "signature_dish",
+          "title": "Signature dishes",
+          "shared": true,
+          "example_question": "Which dish is known in the family as yours, and what's the secret nobody else gets right?"
+        },
+        {
+          "id": "everyday_meals",
+          "title": "Everyday meals",
+          "shared": true,
+          "example_question": "Which dinner did the kids complain about the most?"
+        },
+        {
+          "id": "baking",
+          "title": "Baking and special treats",
+          "shared": false,
+          "example_question": "What's the biggest baking disaster you remember?"
+        },
+        {
+          "id": "preserving",
+          "title": "Preserving, garden food and foraging",
+          "shared": false,
+          "example_question": "What's the craziest amount of jam, pickles or mushrooms you ever made in one go?"
+        },
+        {
+          "id": "inherited_recipes",
+          "title": "Recipes passed down",
+          "shared": false,
+          "example_question": "Which recipe did you learn from your mother or father, and what did you change about it?"
+        },
+        {
+          "id": "shortages",
+          "title": "Cooking when things were scarce",
+          "shared": false,
+          "example_question": "What's the cleverest thing you ever cooked out of almost nothing?"
+        },
+        {
+          "id": "taste_memory",
+          "title": "Tastes they still miss",
+          "shared": false,
+          "example_question": "If you could taste one thing from your childhood again, what would it be, and who made it?"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "traditions",
+      "title": "Celebrations and Traditions",
+      "description": "Holidays, rituals and the things only this family did.",
+      "subtopics": [
+        {
+          "id": "christmas_eve",
+          "title": "Christmas Eve from morning to night",
+          "shared": true,
+          "example_question": "Walk me through Christmas Eve at home, from waking up to going to bed. What was always the same?"
+        },
+        {
+          "id": "new_year",
+          "title": "New Year's Eve",
+          "shared": false,
+          "example_question": "Which New Year's Eve do you remember best, and why?"
+        },
+        {
+          "id": "easter",
+          "title": "Easter",
+          "shared": false,
+          "example_question": "What was your trick for winning at egg knocking?"
+        },
+        {
+          "id": "midsummer",
+          "title": "Midsummer",
+          "shared": true,
+          "example_question": "What's the wildest Midsummer's Eve you remember?"
+        },
+        {
+          "id": "birthdays",
+          "title": "Birthdays and name days",
+          "shared": true,
+          "example_question": "Which birthday party didn't go as planned?"
+        },
+        {
+          "id": "school_start",
+          "title": "First day of school, 1 September",
+          "shared": true,
+          "example_question": "What do you remember about a first day of school: the flowers, the outfits, the nerves?"
+        },
+        {
+          "id": "official_holidays",
+          "title": "Official holidays of the time",
+          "shared": false,
+          "example_question": "What did you really do on official holidays like the May Day parades?",
+          "who": "remember_soviet_times"
+        },
+        {
+          "id": "sauna",
+          "title": "Sauna traditions",
+          "shared": false,
+          "example_question": "What's the best story that ever started or ended in the sauna?"
+        },
+        {
+          "id": "family_rituals",
+          "title": "Rituals only this family had",
+          "shared": true,
+          "example_question": "What's something our family always did that other families found a bit odd?"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "travel",
+      "title": "Travel and Adventures",
+      "description": "Trips, holidays and journeys.",
+      "subtopics": [
+        {
+          "id": "travel_amount",
+          "title": "How much they travelled and where they could go",
+          "shared": false,
+          "example_question": "What's the farthest you managed to travel when you were young, and how did you get there?"
+        },
+        {
+          "id": "first_trips",
+          "title": "First trips and family holidays",
+          "shared": true,
+          "example_question": "Where did the family go on holiday when the kids were small, and what did you squeeze into the car?"
+        },
+        {
+          "id": "dream_places",
+          "title": "Places dreamed of and finally seen",
+          "shared": false,
+          "example_question": "Which place did you dream about seeing that felt completely out of reach?"
+        },
+        {
+          "id": "travel_mishaps",
+          "title": "Mishaps that became good stories",
+          "shared": true,
+          "example_question": "What's the funniest thing that ever went wrong on a trip?"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "hobbies",
+      "title": "Hobbies and Skills",
+      "description": "What they love doing and what they know how to do.",
+      "subtopics": [
+        {
+          "id": "hobbies_over_time",
+          "title": "Hobbies across the decades",
+          "shared": false,
+          "example_question": "Which hobby did you throw yourself into completely, and then drop?"
+        },
+        {
+          "id": "handwork",
+          "title": "Making, fixing, building, gardening",
+          "shared": false,
+          "example_question": "What's the most impressive thing you ever made or fixed with your own hands?"
+        },
+        {
+          "id": "pastimes",
+          "title": "Sports, books and music",
+          "shared": false,
+          "example_question": "Which book, film or record did you go through so many times it nearly fell apart?"
+        },
+        {
+          "id": "inherited_skills",
+          "title": "Skills learned from their parents",
+          "shared": false,
+          "example_question": "Which skill did your parents teach you, and how did those lessons go?"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "wisdom",
+      "title": "Life Wisdom",
+      "description": "Lessons, advice and what matters most.",
+      "subtopics": [
+        {
+          "id": "advice",
+          "title": "Advice for children and grandchildren",
+          "shared": false,
+          "example_question": "What's the best advice you ever ignored?"
+        },
+        {
+          "id": "younger_self",
+          "title": "What they would tell their younger self",
+          "shared": false,
+          "example_question": "If you could sit down with yourself at twenty-five, what would you warn them about?"
+        },
+        {
+          "id": "what_matters",
+          "title": "What matters most now",
+          "shared": false,
+          "example_question": "What small thing makes a day good for you now?"
+        }
+      ],
+      "who": "adults"
+    },
+    {
+      "id": "kids",
+      "title": "Kids' Corner",
+      "description": "Stories from and about the youngest generation.",
+      "who": "generation_3",
+      "subtopics": [
+        {
+          "id": "best_day",
+          "title": "Best day ever",
+          "shared": false,
+          "example_question": "What was the best day you've ever had, and what made it so good?",
+          "who": "kids_with_help"
+        },
+        {
+          "id": "grandparents_fun",
+          "title": "Time with grandma and grandpa",
+          "shared": false,
+          "example_question": "What's the most fun thing you've done with grandma or grandpa?",
+          "who": "kids_with_help"
+        },
+        {
+          "id": "when_i_grow_up",
+          "title": "When I grow up",
+          "shared": false,
+          "example_question": "If you could be anything when you grow up, what would you be, and why?",
+          "who": "kids_with_help"
+        },
+        {
+          "id": "question_for_grandparents",
+          "title": "A question for the grandparents",
+          "shared": false,
+          "example_question": "If you could ask grandma or grandpa anything about when they were little, what would you ask?",
+          "who": "kids_with_help"
+        },
+        {
+          "id": "little_one_moments",
+          "title": "Little ones' moments",
+          "shared": true,
+          "example_question": "What's the funniest thing this little one has done or said lately?",
+          "who": "family_about_child"
+        },
+        {
+          "id": "little_one_firsts",
+          "title": "Firsts",
+          "shared": true,
+          "example_question": "What do you remember about this little one's first steps or first words?",
+          "who": "family_about_child"
+        }
+      ]
+    },
+    {
+      "id": "now",
+      "title": "Life Now",
+      "description": "A dated snapshot of life today, repeated every year.",
+      "repeat": "yearly",
+      "subtopics": [
+        {
+          "id": "current_home",
+          "title": "Where and how they live today",
+          "shared": false,
+          "example_question": "What's your favourite spot in your home right now, and what do you do there?"
+        },
+        {
+          "id": "normal_week",
+          "title": "A normal week",
+          "shared": false,
+          "example_question": "What does an ordinary Tuesday look like for you right now, from morning coffee to bedtime?"
+        },
+        {
+          "id": "joys_worries",
+          "title": "What makes them happy, what worries them",
+          "shared": false,
+          "example_question": "What made you laugh this week?"
+        },
+        {
+          "id": "plans_wishes",
+          "title": "Plans and wishes",
+          "shared": false,
+          "example_question": "What's something you still want to try that might surprise your children?"
+        }
+      ],
+      "who": "everyone"
+    }
+  ],
+  "tree_expansion": {
+    "trigger": "A transcript mentions a relative by name or by relationship (grandmother, uncle, cousin, godparent).",
+    "steps": [
+      "Extract the name, the relationship to the storyteller and the sentence it came from.",
+      "Check whether the person already exists in the family tree.",
+      "If new, suggest adding them: show the name, relationship and source story, and wait for the family to confirm.",
+      "Only store what was said. Unknown birth years and details stay empty, never guessed.",
+      "After confirmation, link the person to the story and suggest one follow-up question about them."
+    ],
+    "example": {
+      "transcript_excerpt": "My grandmother Linda always baked bread on Saturdays.",
+      "suggestion": "Ene mentioned her grandmother Linda. Add Linda to the family tree as Ene's grandmother?",
+      "follow_up_question": "What else do you remember about your grandmother Linda?"
+    },
+    "non_relatives": "Friends, neighbours and colleagues are tagged as people in the story, not added to the tree."
+  },
+  "follow_up_prompts": [
+    "And then what happened?",
+    "Who else was there?",
+    "What did it look, sound or smell like?",
+    "How did you feel right then?",
+    "Did anyone ever find out?",
+    "Would you do it again?"
+  ],
+  "generation_context": {
+    "1": "Ene (1957) and Kalmer (1958): grew up in Soviet Estonia in the 1960s, young adults in the 1970s, raised four children through the Singing Revolution, independence in 1991 and the 1990s.",
+    "2": "Jaanika, Marju, Liis, Tanel and partners Martin and Mathis (born 1984 to 1992): childhood in late Soviet times or the 1990s, grew up alongside Estonia's independence and the arrival of the internet; several have lived or studied abroad. Now in their 30s and 40s, some raising children.",
+    "3": "Grandchildren Lili-Marleen (12), Elisabeth (8), Liv (6), Iris (4), Artur (2): the older two can answer simple questions with help; stories about the younger ones are told by their parents and grandparents."
+  },
+  "shared_meaning": "shared = true means a memory many people may have lived. Ask everyone who was there for their own version, separately, so no one hears another version first."
+}
