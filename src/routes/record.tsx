@@ -90,7 +90,7 @@ function Record() {
       const chunks: Blob[] = [];
       mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
       mr.onstop = () => {
-        setBlob(new Blob(chunks, { type: (mr.mimeType || mime || "audio/webm").split(";")[0] }));
+        setBlob(new Blob(chunks, { type: (mr.mimeType || mime || "audio/webm").split(";")[0] ?? "audio/webm" }));
         stream.getTracks().forEach((t) => t.stop());
       };
       mr.start(1000);
