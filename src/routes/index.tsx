@@ -93,7 +93,7 @@ function Home() {
           alt="A family listening to stories together"
           className="w-full"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/55 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-background/95 via-background/70 to-transparent sm:h-60" />
         <div className="absolute inset-x-0 top-0 p-6 sm:p-10">
           <h1 className="font-display text-3xl text-foreground sm:text-5xl">Our family</h1>
           <p className="mt-2 max-w-md text-sm text-muted-foreground sm:text-lg">
