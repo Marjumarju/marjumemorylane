@@ -125,7 +125,7 @@ function Browse() {
               Writing the family story…
             </>
           ) : (
-            "..or create a stores about family"
+            "..or create a story about our family"
           )}
         </Button>
       </div>
