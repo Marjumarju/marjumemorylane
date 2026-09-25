@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useServerFn } from "@tanstack/react-start";
 import { transcribeAudio } from "@/lib/transcribe.functions";
+import { classifyStory, type StoryLabels } from "@/lib/classify.functions";
 import { blobToBase64, pickMime } from "@/lib/audio";
 
 type Search = { teller?: string | undefined; about?: string | undefined };
@@ -48,6 +49,9 @@ function Record() {
   const [transcript, setTranscript] = useState("");
   const [transcribing, setTranscribing] = useState(false);
   const transcribeFn = useServerFn(transcribeAudio);
+  const classifyFn = useServerFn(classifyStory);
+  const [labels, setLabels] = useState<StoryLabels | null>(null);
+  const [askSensitive, setAskSensitive] = useState(false);
   const rec = useRef<MediaRecorder | null>(null);
   const timer = useRef<number | undefined>(undefined);
   const [level, setLevel] = useState(0);
@@ -69,6 +73,8 @@ function Record() {
     let cancelled = false;
     setTranscribing(true);
     setTranscript("");
+    setLabels(null);
+    setAskSensitive(false);
     blobToBase64(blob)
       .then((audio) => transcribeFn({ data: { audio, mime: blob.type } }))
       .then((r) => { if (!cancelled) setTranscript(r.text); })
@@ -134,9 +140,24 @@ function Record() {
     setRecording(false);
   }
 
-  async function save() {
+  async function save(confirmedSensitive = false) {
     if (!teller || !pick) return;
     setSaving(true);
+
+    // Classify before anything is written, so a story the family may not want shared can
+    // still be stopped while they can act on it. See docs/jev.md.
+    const text = transcript.trim() || note.trim();
+    let marks = labels;
+    if (text && !marks) {
+      marks = await classifyFn({ data: { text, question } });
+      setLabels(marks);
+    }
+    if (marks && marks.sensitive > 0.6 && !confirmedSensitive) {
+      setAskSensitive(true);
+      setSaving(false);
+      return;
+    }
+
     let audio_path: string | null = null;
     if (blob) {
       const ext = blob.type.includes("mp4") ? "m4a" : "webm";
@@ -154,6 +175,11 @@ function Record() {
       audio_path,
       duration_seconds: blob ? secs : null,
       transcript: transcript.trim() || null,
+      on_topic: marks?.on_topic ?? null,
+      richness: marks?.richness ?? null,
+      mood: marks?.mood ?? null,
+      sensitive: marks?.sensitive ?? null,
+      labels_provider: marks?.provider ?? null,
     } as never);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
@@ -215,7 +241,14 @@ function Record() {
               {transcribing ? (
                 <p className="text-sm italic text-muted-foreground">Writing it down…</p>
               ) : (
-                <Textarea rows={5} value={transcript} onChange={(e) => setTranscript(e.target.value)} placeholder="The transcript will appear here" />
+                <>
+                  <Textarea rows={5} value={transcript} onChange={(e) => setTranscript(e.target.value)} placeholder="The transcript will appear here" />
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Your recording is written down by a speech service, and the written words are sent to a
+                    classification service that sorts the story by topic and feeling. Edit the text above before
+                    saving if there is something you would rather not send.
+                  </p>
+                </>
               )}
             </div>
           )}
@@ -234,7 +267,19 @@ function Record() {
           )}
 
           <Textarea className="mt-6" rows={4} placeholder="Add a written note, names, or type the story if you'd rather not record (optional)" value={note} onChange={(e) => setNote(e.target.value)} />
-          <Button className="mt-4" size="lg" disabled={saving || recording || transcribing || (!blob && !note.trim())} onClick={save}>
+          {askSensitive && (
+            <div className="mt-4 rounded-xl border border-destructive/40 bg-destructive/5 p-4">
+              <p className="text-sm">
+                This one sounds personal — it may mention health, money, addresses or a family falling-out.
+                Everyone in the family can read what you save here.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button size="sm" onClick={() => { setAskSensitive(false); void save(true); }}>Save it anyway</Button>
+                <Button size="sm" variant="outline" onClick={() => setAskSensitive(false)}>Let me edit it first</Button>
+              </div>
+            </div>
+          )}
+          <Button className="mt-4" size="lg" disabled={saving || recording || transcribing || (!blob && !note.trim())} onClick={() => void save()}>
             {saving ? "Saving…" : "Save story"}
           </Button>
         </Step>
