@@ -1,0 +1,1 @@
+ALTER TABLE public.person_details ADD COLUMN birth_place text;

@@ -16,18 +16,21 @@ export type Database = {
     Tables: {
       person_details: {
         Row: {
+          birth_place: string | null
           city: string | null
           person_id: string
           studies: Json
           updated_at: string
         }
         Insert: {
+          birth_place?: string | null
           city?: string | null
           person_id: string
           studies?: Json
           updated_at?: string
         }
         Update: {
+          birth_place?: string | null
           city?: string | null
           person_id?: string
           studies?: Json
@@ -80,8 +83,13 @@ export type Database = {
           created_by: string
           duration_seconds: number | null
           id: string
+          labels_provider: string | null
+          mood: string | null
           note: string | null
+          on_topic: number | null
           question: string
+          richness: number | null
+          sensitive: number | null
           storyteller_id: string
           subtopic_id: string
           title: string | null
@@ -95,8 +103,13 @@ export type Database = {
           created_by?: string
           duration_seconds?: number | null
           id?: string
+          labels_provider?: string | null
+          mood?: string | null
           note?: string | null
+          on_topic?: number | null
           question: string
+          richness?: number | null
+          sensitive?: number | null
           storyteller_id: string
           subtopic_id: string
           title?: string | null
@@ -110,8 +123,13 @@ export type Database = {
           created_by?: string
           duration_seconds?: number | null
           id?: string
+          labels_provider?: string | null
+          mood?: string | null
           note?: string | null
+          on_topic?: number | null
           question?: string
+          richness?: number | null
+          sensitive?: number | null
           storyteller_id?: string
           subtopic_id?: string
           title?: string | null
