@@ -44,16 +44,52 @@ function Profile() {
       </div>
     );
 
+  const mine = stories.filter((s) => s.storyteller_id === id || s.about_person_id === id);
+  const topicsCovered = categories.filter((c) => mine.some((s) => s.category_id === c.id));
+  const photo = photos[id];
+
   return (
     <div>
-      <div className="text-xs uppercase tracking-widest text-muted-foreground">Generation {gen}</div>
-      <h1 className="mt-1 font-display text-5xl">{p.name}</h1>
-      <p className="mt-2 text-muted-foreground">Born {p.birth_year}{gen === 3 && ` · ${ageOf(p)} years old`}</p>
+      <div className="flex items-center gap-5">
+        {photo ? (
+          <img src={photo} alt={p.name} className="h-24 w-24 rounded-full border-2 border-border object-cover shadow-md" />
+        ) : (
+          <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-border bg-muted font-display text-3xl shadow-md">{p.name[0]}</div>
+        )}
+        <div>
+          <div className="text-xs uppercase tracking-widest text-muted-foreground">Generation {gen}</div>
+          <h1 className="mt-1 font-display text-5xl">{p.name}</h1>
+          <p className="mt-1 text-muted-foreground">{ageOf(p)} years old</p>
+        </div>
+      </div>
       <div className="mt-4 space-y-1 text-sm">
         {rel("Parents", parents as { id: string; name: string }[])}
         {partner && rel("Partner", [partner])}
         {rel("Children", kids)}
       </div>
+
+      {/* Story snapshot — grows as stories are told */}
+      <div className="mt-6 rounded-xl border border-border bg-card p-5">
+        <div className="flex items-center gap-2 text-sm font-medium">
+          <Mic className="h-4 w-4 text-primary" />
+          {mine.length === 0
+            ? `No stories about ${p.name} yet`
+            : `${mine.length} ${mine.length === 1 ? "story" : "stories"} ${told.length > 0 ? `· ${told.length} in ${p.name}'s own voice` : `about ${p.name}`}`}
+        </div>
+        {topicsCovered.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {topicsCovered.map((c) => (
+              <Link key={c.id} to="/stories" search={{ person: id, category: c.id }} className="rounded-full border border-border bg-background px-3 py-1 text-xs hover:border-primary">
+                {c.title}
+              </Link>
+            ))}
+          </div>
+        )}
+        {mine.length === 0 && (
+          <p className="mt-2 text-sm text-muted-foreground">Record the first one and this page will start filling in.</p>
+        )}
+      </div>
+
       <p className="mt-4 max-w-2xl text-sm italic text-muted-foreground">{app.generation_context[String(gen)]}</p>
 
       <div className="mt-6 flex flex-wrap gap-3">
