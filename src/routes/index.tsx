@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ageOf, childrenOf, generation, partnerOf, people, type Person } from "@/lib/family";
+import { ageOf, childrenOf, generation, partnerOf, people, photos, type Person } from "@/lib/family";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,8 +16,13 @@ export const Route = createFileRoute("/")({
 function PersonChip({ p }: { p: Person }) {
   return (
     <Link to="/people/$id" params={{ id: p.id }} className="group block rounded-lg border border-border bg-card px-4 py-3 text-center transition hover:border-primary">
+      {photos[p.id] ? (
+        <img src={photos[p.id]} alt={p.name} className="mx-auto mb-2 h-16 w-16 rounded-full object-cover" />
+      ) : (
+        <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-muted font-display text-xl text-muted-foreground">{p.name.charAt(0)}</div>
+      )}
       <div className="font-display text-lg group-hover:text-primary">{p.name}</div>
-      <div className="text-xs text-muted-foreground">{generation(p) === 3 ? `${ageOf(p)} years` : `b. ${p.birth_year}`}</div>
+      <div className="text-xs text-muted-foreground">{ageOf(p)} years old</div>
     </Link>
   );
 }
