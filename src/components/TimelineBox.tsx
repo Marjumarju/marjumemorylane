@@ -9,7 +9,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-type Row = { id?: string; year: number | null; label: string; place: string | null; story_id?: string | null; source?: string };
+type Row = { id?: string; year: number | null; end_year?: number | null; label: string; place: string | null; story_id?: string | null; source?: string };
+
+const CURRENT_YEAR = new Date().getFullYear();
+
+function whenLabel(r: Row) {
+  if (!r.year) return r.end_year ? `until ${r.end_year}` : "—";
+  if (!r.end_year || r.end_year === r.year) return `${r.year}`;
+  return `${r.year}–${r.end_year}`;
+}
+function howLong(r: Row) {
+  if (!r.year) return "";
+  const end = r.end_year && r.end_year >= r.year ? r.end_year : null;
+  if (end) {
+    const n = end - r.year;
+    return n > 0 ? `${n} ${n === 1 ? "year" : "years"}` : "";
+  }
+  const n = CURRENT_YEAR - r.year;
+  return n > 0 ? `${n} ${n === 1 ? "year" : "years"} ago` : "";
+}
 
 export function TimelineBox({ id, name }: { id: string; name: string }) {
   const qc = useQueryClient();
