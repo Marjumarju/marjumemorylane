@@ -89,7 +89,17 @@ function Profile() {
         ) : aboutQuery.isError ? (
           <p className="mt-2 text-sm text-muted-foreground">{aboutQuery.error.message}</p>
         ) : (
-          <p className="mt-2 text-sm leading-relaxed">{aboutQuery.data.about}</p>
+          <div className="mt-3 space-y-3">
+            {(aboutQuery.data.sections.length
+              ? aboutQuery.data.sections
+              : [{ heading: "", text: aboutQuery.data.about }]
+            ).map((s, i) => (
+              <div key={i}>
+                {s.heading && <p className="text-xs font-semibold uppercase tracking-wide text-primary">{s.heading}</p>}
+                <p className="mt-1 text-sm leading-relaxed">{s.text}</p>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 

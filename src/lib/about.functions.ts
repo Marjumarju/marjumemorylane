@@ -94,15 +94,33 @@ export const getPersonAbout = createServerFn({ method: "GET" })
       .slice(0, 12);
 
     const prompt = [
-      `Write a short, warm "About" paragraph (2-4 sentences, plain text, no headings) about ${p.name}, ${ageOf(p)} years old, for a private family storybank.`,
+      `Write a short, warm structured "About" for ${p.name}, ${ageOf(p)} years old, for a private family storybank.`,
+      `Return ONLY a JSON array of 2-4 sections, like [{"heading": "...", "text": "..."}]. No markdown fences, no commentary.`,
+      `Suggested section flow (adapt headings to the person): the times they were born into, what their stories reveal about them, their life today. If they have no stories yet, describe their era and gently invite the first story.`,
+      `Each section: 1-3 sentences, plain text, no bullet points, no line breaks inside text.`,
       `Era context: ${era}`,
       facts ? `Facts: ${facts}` : "",
       snippets.length
         ? `They have told these stories (question — what they said):\n${snippets.join("\n")}\nWeave in what their stories reveal about them, without listing them.`
-        : `They have not recorded any stories yet; describe their era and gently invite the first story.`,
+        : `They have not recorded any stories yet.`,
       `Write in English, third person, affectionate but not gushing.`,
     ].filter(Boolean).join("\n\n");
 
-    const about = await askAi(prompt);
-    return { about, storyCount: rows?.length ?? 0 };
+    const raw = await askAi(prompt);
+    let sections: { heading: string; text: string }[] = [];
+    let about = raw;
+    try {
+      const cleaned = raw.replace(/^```(?:json)?/m, "").replace(/```$/m, "").trim();
+      const parsed = JSON.parse(cleaned.startsWith("[") ? cleaned : cleaned.slice(cleaned.indexOf("["))) as unknown;
+      if (Array.isArray(parsed)) {
+        sections = parsed
+          .filter((s): s is { heading?: unknown; text?: unknown } => typeof s === "object" && s !== null)
+          .map((s) => ({ heading: String(s.heading ?? "").trim(), text: String(s.text ?? "").trim() }))
+          .filter((s) => s.heading && s.text);
+      }
+    } catch {
+      // keep plain-text fallback
+    }
+    if (sections.length) about = "";
+    return { sections, about, storyCount: rows?.length ?? 0 };
   });
