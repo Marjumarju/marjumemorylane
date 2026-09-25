@@ -19,7 +19,7 @@ function PersonChip({ p, count }: { p: Person; count: number }) {
   return (
     <Link to="/people/$id" params={{ id: p.id }} className="group block rounded-lg border border-border bg-card px-4 py-3 text-center transition hover:border-primary">
       <div className="font-display text-lg group-hover:text-primary">{p.name}</div>
-      <div className="text-xs text-muted-foreground">{generation(p) === 3 ? `${ageOf(p)} years` : `b. ${p.birth_year}`} · {count} {count === 1 ? "story" : "stories"}</div>
+      <div className="text-xs text-muted-foreground">{generation(p) === 3 ? `${ageOf(p)} years` : `b. ${p.birth_year}`}</div>
     </Link>
   );
 }
