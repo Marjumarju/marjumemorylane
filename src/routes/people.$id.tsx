@@ -40,6 +40,16 @@ function Profile() {
   const topicsCovered = categories.filter((c) => mine.some((s) => s.category_id === c.id));
   const photo = photos[id];
 
+  const queryClient = useQueryClient();
+  const fetchAbout = useServerFn(getPersonAbout);
+  const aboutKey = ["about", id, mine.length];
+  const aboutQuery = useQuery({
+    queryKey: aboutKey,
+    queryFn: () => fetchAbout({ data: { personId: id } }),
+    staleTime: 1000 * 60 * 30,
+    retry: false,
+  });
+
   return (
     <div>
       <div className="flex items-center gap-5">
