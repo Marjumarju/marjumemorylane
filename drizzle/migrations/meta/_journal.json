@@ -15,6 +15,13 @@
       "when": 1790335037967,
       "tag": "0001_open_access_no_login",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790336276365,
+      "tag": "0002_allow_anon_delete_stories",
+      "breakpoints": true
     }
   ]
 }
