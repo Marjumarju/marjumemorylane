@@ -1,7 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { ageOf, childrenOf, generation, partnerOf, people, type Person } from "@/lib/family";
-import { storiesQuery } from "@/lib/stories";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,7 +33,7 @@ function Home() {
 
       <section className="mt-12">
         <h2 className="mb-4 text-xs uppercase tracking-widest text-muted-foreground">Grandparents</h2>
-        <div className="grid max-w-md grid-cols-2 gap-3">{g1.map((p) => <PersonChip key={p.id} p={p} count={count(p.id)} />)}</div>
+        <div className="grid max-w-md grid-cols-2 gap-3">{g1.map((p) => <PersonChip key={p.id} p={p} />)}</div>
       </section>
 
       <section className="mt-12">
@@ -47,12 +45,12 @@ function Home() {
             return (
               <div key={p.id} className="rounded-xl border border-dashed border-border p-4">
                 <div className="grid grid-cols-2 gap-3">
-                  <PersonChip p={p} count={count(p.id)} />
-                  {partner && <PersonChip p={partner} count={count(partner.id)} />}
+                  <PersonChip p={p} />
+                  {partner && <PersonChip p={partner} />}
                 </div>
                 {kids.length > 0 && (
                   <div className="mt-3 grid grid-cols-2 gap-3 border-t border-border pt-3 sm:grid-cols-3">
-                    {kids.map((k) => <PersonChip key={k.id} p={k} count={count(k.id)} />)}
+                    {kids.map((k) => <PersonChip key={k.id} p={k} />)}
                   </div>
                 )}
               </div>
