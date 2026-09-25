@@ -35,7 +35,7 @@ function PersonChip({ p }: { p: Person }) {
 }
 
 /** Two partners side by side, joined by a small heart on a line. */
-function Couple({ a, b }: { a: Person; b?: Person }) {
+function Couple({ a, b }: { a: Person; b?: Person | undefined }) {
   return (
     <div className="flex items-center justify-center">
       <PersonChip p={a} />
