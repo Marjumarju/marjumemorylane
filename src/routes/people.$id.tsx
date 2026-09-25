@@ -1,8 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Mic } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Mic, RefreshCw, Sparkles } from "lucide-react";
 import { ageOf, categories, generation, personById, photos } from "@/lib/family";
 import { storiesQuery } from "@/lib/stories";
+import { getPersonAbout } from "@/lib/about.functions";
 import { StoryCard } from "@/components/StoryCard";
 import { Button } from "@/components/ui/button";
 
