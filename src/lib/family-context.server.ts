@@ -17,7 +17,8 @@ export function publicClient() {
   });
 }
 
-const catTitle = (c: string, s: string) => {
+const catTitle = (c: string | null, s: string | null) => {
+  if (!c) return "";
   const cat = categories.find((x) => x.id === c);
   const sub = cat?.subtopics.find((x) => x.id === s);
   return [cat?.title, sub?.title].filter(Boolean).join(" / ");
@@ -59,7 +60,7 @@ export async function buildFamilyContext() {
     .map((s) => {
       const teller = personById(s.storyteller_id)?.name ?? s.storyteller_id;
       const about = s.about_person_id ? personById(s.about_person_id)?.name : null;
-      return `[story ${s.id}] ${s.created_at.slice(0, 10)} told by ${teller}${about ? ` about ${about}` : ""} — topic ${catTitle(s.category_id, s.subtopic_id)} — question: "${s.question}"${s.title ? ` — title: ${s.title}` : ""}${s.transcript ? ` — said: ${s.transcript}` : ""}${s.note ? ` — note: ${s.note}` : ""}`;
+      return `[story ${s.id}] ${s.created_at.slice(0, 10)} told by ${teller}${about ? ` about ${about}` : ""} — topic ${catTitle(s.category_id, s.subtopic_id) || "none (freely told)"}${s.question ? ` — question: "${s.question}"` : ""}${s.title ? ` — title: ${s.title}` : ""}${s.transcript ? ` — said: ${s.transcript}` : ""}${s.note ? ` — note: ${s.note}` : ""}`;
     })
     .join("\n");
 

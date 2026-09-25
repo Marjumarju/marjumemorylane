@@ -46,10 +46,10 @@ export const generateFamilyHistory = createServerFn({ method: "POST" })
     const storyLines = (storyRows ?? []).map((story) => {
       const teller = personById(story.storyteller_id)?.name ?? "Unknown storyteller";
       const about = personById(story.about_person_id ?? story.storyteller_id)?.name ?? "the family";
-      const category = categories.find((c) => c.id === story.category_id)?.title ?? story.category_id;
+      const category = categories.find((c) => c.id === story.category_id)?.title ?? null;
       const body = (story.transcript || story.note || "").replace(/\s+/g, " ").trim();
       const trimmed = body.length > 800 ? `${body.slice(0, 800)}…` : body;
-      return `- ${teller} told a story about ${about} in the ${category} topic${story.question ? `, prompted by: “${story.question}”` : ""}${trimmed ? `: ${trimmed}` : ""}`;
+      return `- ${teller} told a story about ${about}${category ? ` in the ${category} topic` : ""}${story.question ? `, prompted by: “${story.question}”` : ""}${trimmed ? `: ${trimmed}` : ""}`;
     });
 
     const prompt = [

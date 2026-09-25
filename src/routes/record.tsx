@@ -41,6 +41,7 @@ function Record() {
   const [tellerId, setTellerId] = useState(search.teller ?? "");
   const [aboutId, setAboutId] = useState(search.about ?? search.teller ?? "");
   const [pick, setPick] = useState<{ c: Category; s: Subtopic } | null>(null);
+  const [free, setFree] = useState(false);
   const [question, setQuestion] = useState("");
   const [note, setNote] = useState("");
   const [blob, setBlob] = useState<Blob | null>(null);
@@ -98,6 +99,7 @@ function Record() {
     const subs = c.subtopics.length > 1 && pick ? c.subtopics.filter((s) => s.id !== pick.s.id) : c.subtopics;
     const s = subs[Math.floor(Math.random() * subs.length)];
     if (!s) return;
+    setFree(false);
     setPick({ c, s });
     setQuestion(s.example_question);
   }
@@ -152,7 +154,7 @@ function Record() {
   }
 
   async function save(confirmedSensitive = false) {
-    if (!teller || !pick) return;
+    if (!teller || (!pick && !free)) return;
     setSaving(true);
 
     // Classify before anything is written, so a story the family may not want shared can
@@ -160,7 +162,7 @@ function Record() {
     const text = transcript.trim() || note.trim();
     let marks = labels;
     if (text && !marks) {
-      marks = await classifyFn({ data: { text, question } });
+      marks = await classifyFn({ data: { text, question: free ? question.trim() : question } });
       setLabels(marks);
     }
     if (marks && marks.sensitive > 0.6 && !confirmedSensitive) {
@@ -179,9 +181,9 @@ function Record() {
     const { data: savedStory, error } = await supabase.from("stories").insert({
       storyteller_id: teller.id,
       about_person_id: about?.id ?? teller.id,
-      category_id: pick.c.id,
-      subtopic_id: pick.s.id,
-      question,
+      category_id: pick && !free ? pick.c.id : null,
+      subtopic_id: pick && !free ? pick.s.id : null,
+      question: free ? (question.trim() || null) : question,
       note: note.trim() || null,
       audio_path,
       duration_seconds: blob ? secs : null,
@@ -228,21 +230,31 @@ function Record() {
               <button key={c.id} className={pill(pick?.c.id === c.id)} onClick={() => ask(c)}>{c.title}</button>
             ))}
             <button className={pill(false)} onClick={() => topics.length && ask(topics[Math.floor(Math.random() * topics.length)]!)}>Surprise me</button>
+            <button className={pill(free)} onClick={() => { setFree(true); setPick(null); }}>No topic — just tell it</button>
           </div>
         </Step>
       )}
 
-      {pick && (
-        <Step n={3} title="Your question">
+      {(pick || free) && (
+        <Step n={3} title={free ? "Your story" : "Your question"}>
+          {free ? (
+            <input
+              className="w-full rounded-xl border border-border bg-card px-4 py-3 font-display text-xl"
+              placeholder="What's it about? (optional)"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+            />
+          ) : (
           <div className="rounded-xl bg-secondary p-6">
             <p className="font-display text-2xl leading-snug">{question}</p>
-            {pick.s.shared && (
+            {pick?.s.shared && (
               <p className="mt-3 text-sm text-muted-foreground">This is a shared memory. Tell your own version, the way you remember it. Try not to listen to anyone else's first.</p>
             )}
             {!recording && !blob && (
-              <button className="mt-4 text-sm text-primary underline underline-offset-4" onClick={() => ask(pick.c)}>Give me another question</button>
+              <button className="mt-4 text-sm text-primary underline underline-offset-4" onClick={() => { if (pick) ask(pick.c); }}>Give me another question</button>
             )}
           </div>
+          )}
 
           <div className="mt-6 flex items-center gap-4">
             {!recording ? (

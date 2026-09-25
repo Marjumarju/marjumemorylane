@@ -15,7 +15,7 @@ import { StoryMedia } from "@/components/StoryMedia";
 export function StoryCard({ story, hideTopic = false }: { story: Story; hideTopic?: boolean }) {
   const teller = personById(story.storyteller_id);
   const about = story.about_person_id && story.about_person_id !== story.storyteller_id ? personById(story.about_person_id) : null;
-  const sub = subtopicById(story.category_id, story.subtopic_id);
+  const sub = story.category_id && story.subtopic_id ? subtopicById(story.category_id, story.subtopic_id) : undefined;
   const queryClient = useQueryClient();
   const [confirming, setConfirming] = useState(false);
   const audioPath = story.audio_path;
@@ -65,7 +65,9 @@ export function StoryCard({ story, hideTopic = false }: { story: Story; hideTopi
     <article className="rounded-lg border border-border bg-card p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">
-          {!hideTopic && <>{categoryById(story.category_id)?.title} · {sub?.title}</>}
+          {!hideTopic && (story.category_id
+            ? <>{categoryById(story.category_id)?.title} · {sub?.title}</>
+            : "A story")}
           {sub?.shared && <span className={hideTopic ? "rounded bg-accent px-1.5 py-0.5 text-accent-foreground normal-case tracking-normal" : "ml-2 rounded bg-accent px-1.5 py-0.5 text-accent-foreground normal-case tracking-normal"}>shared memory</span>}
         </div>
         {!confirming ? (
@@ -88,7 +90,9 @@ export function StoryCard({ story, hideTopic = false }: { story: Story; hideTopi
           </div>
         )}
       </div>
-      <p className="mt-2 font-display text-xl leading-snug">“{story.question}”</p>
+      {story.question && (
+        <p className="mt-2 font-display text-xl leading-snug">“{story.question}”</p>
+      )}
       <div className="mt-2 text-sm text-muted-foreground">
         told by{" "}
         {teller && <Link to="/people/$id" params={{ id: teller.id }} className="text-primary underline-offset-2 hover:underline">{teller.name}</Link>}

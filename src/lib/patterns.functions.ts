@@ -40,9 +40,9 @@ export const getPatterns = createServerFn({ method: "GET" })
       return `${p.id}: ${p.name}, born ${p.birth_year}${d?.birth_place ? ` in ${d.birth_place}` : ""}, generation ${generation(p)}${d?.city ? `, lives in ${d.city}` : ""}${st ? `, studied ${st}` : ""}`;
     });
     const storyLines = stories.map((s) => {
-      const cat = categories.find((c) => c.id === s.category_id)?.title ?? s.category_id;
+      const cat = categories.find((c) => c.id === s.category_id)?.title ?? (s.category_id ? s.category_id : "no topic");
       const body = (s.transcript || s.note || "").slice(0, 600);
-      return `[teller ${s.storyteller_id}${s.about_person_id && s.about_person_id !== s.storyteller_id ? `, about ${s.about_person_id}` : ""}] (${cat}) Q: ${s.question}${body ? ` A: ${body}` : ""}`;
+      return `[teller ${s.storyteller_id}${s.about_person_id && s.about_person_id !== s.storyteller_id ? `, about ${s.about_person_id}` : ""}] (${cat})${s.question ? ` Q: ${s.question}` : ""}${body ? ` A: ${body}` : ""}`;
     });
 
     const prompt = `You analyse a private family storybank and find patterns across people's stories.

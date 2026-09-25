@@ -31,7 +31,7 @@ export const extractTimeline = createServerFn({ method: "POST" })
       det?.city ? `Lives now in ${det.city}.` : "",
       studies.length ? `Studies: ${studies.join("; ")}` : "",
       `Already on the timeline (do NOT repeat): ${(existing ?? []).map((e) => `${e.year ?? "?"} ${e.label}`).join("; ") || "nothing"}`,
-      `Stories:\n${(stories ?? []).map((s) => `[${s.id}] ${s.question} — ${s.transcript || s.note || s.title || ""}`).join("\n") || "none"}`,
+      `Stories:\n${(stories ?? []).map((s) => `[${s.id}] ${s.question ? `${s.question} — ` : ""}${s.transcript || s.note || s.title || ""}`).join("\n") || "none"}`,
     ].filter(Boolean).join("\n\n");
 
     const raw = await askAi(prompt);
