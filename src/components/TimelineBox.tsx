@@ -50,7 +50,7 @@ export function TimelineBox({ id, name }: { id: string; name: string }) {
 
   async function save() {
     if (!edit?.label.trim()) return;
-    const row = { person_id: id, year: edit.year, label: edit.label.trim(), place: edit.place?.trim() || null, source: "manual" };
+    const row = { person_id: id, year: edit.year, end_year: edit.end_year ?? null, label: edit.label.trim(), place: edit.place?.trim() || null, source: "manual" };
     const { error } = edit.id
       ? await supabase.from("person_timeline").update(row).eq("id", edit.id)
       : await supabase.from("person_timeline").insert(row);
