@@ -1,6 +1,7 @@
 import data from "@/data/family.json";
 import marjuPhoto from "@/assets/marju.jpg.asset.json";
 import mathisPhoto from "@/assets/mathis.png.asset.json";
+import kalmerPhoto from "@/assets/kalmer.png.asset.json";
 
 export type Person = {
   id: string;
