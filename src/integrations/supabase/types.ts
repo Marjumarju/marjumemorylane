@@ -78,7 +78,7 @@ export type Database = {
         Row: {
           about_person_id: string | null
           audio_path: string | null
-          category_id: string
+          category_id: string | null
           created_at: string
           created_by: string
           duration_seconds: number | null
@@ -87,18 +87,18 @@ export type Database = {
           mood: string | null
           note: string | null
           on_topic: number | null
-          question: string
+          question: string | null
           richness: number | null
           sensitive: number | null
           storyteller_id: string
-          subtopic_id: string
+          subtopic_id: string | null
           title: string | null
           transcript: string | null
         }
         Insert: {
           about_person_id?: string | null
           audio_path?: string | null
-          category_id: string
+          category_id?: string | null
           created_at?: string
           created_by?: string
           duration_seconds?: number | null
@@ -107,18 +107,18 @@ export type Database = {
           mood?: string | null
           note?: string | null
           on_topic?: number | null
-          question: string
+          question?: string | null
           richness?: number | null
           sensitive?: number | null
           storyteller_id: string
-          subtopic_id: string
+          subtopic_id?: string | null
           title?: string | null
           transcript?: string | null
         }
         Update: {
           about_person_id?: string | null
           audio_path?: string | null
-          category_id?: string
+          category_id?: string | null
           created_at?: string
           created_by?: string
           duration_seconds?: number | null
@@ -127,11 +127,11 @@ export type Database = {
           mood?: string | null
           note?: string | null
           on_topic?: number | null
-          question?: string
+          question?: string | null
           richness?: number | null
           sensitive?: number | null
           storyteller_id?: string
-          subtopic_id?: string
+          subtopic_id?: string | null
           title?: string | null
           transcript?: string | null
         }
