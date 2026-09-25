@@ -3,7 +3,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/auth";
 import { ageOf, followUps, generation, people, personById, tellers, topicsFor, type Category, type Subtopic } from "@/lib/family";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,7 +30,6 @@ const pill = (on: boolean) =>
 
 function Record() {
   const search = Route.useSearch();
-  const { session } = useAuth();
   const nav = useNavigate();
   const qc = useQueryClient();
   const [tellerId, setTellerId] = useState(search.teller ?? "");
@@ -82,7 +80,7 @@ function Record() {
   }
 
   async function save() {
-    if (!teller || !pick || !session) return;
+    if (!teller || !pick) return;
     setSaving(true);
     let audio_path: string | null = null;
     if (blob) {
