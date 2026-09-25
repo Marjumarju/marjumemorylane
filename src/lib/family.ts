@@ -1,5 +1,6 @@
 import data from "@/data/family.json";
 import marjuPhoto from "@/assets/marju.jpg.asset.json";
+import mathisPhoto from "@/assets/mathis.png.asset.json";
 
 export type Person = {
   id: string;
@@ -26,6 +27,7 @@ export const people = app.family_tree.people;
 /** Family photos by person id; anyone without one shows their initial instead. */
 export const photos: Partial<Record<string, string>> = {
   marju: marjuPhoto.url,
+  mathis: mathisPhoto.url,
 };
 export const categories = app.categories;
 export const partnerships = app.family_tree.partnerships;
