@@ -12,7 +12,7 @@ export function FamilyChat() {
   const { messages, sendMessage, status, error, setMessages, stop } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
-  const ask = (text: string) => text.trim() && sendMessage({ text: text.trim() });
+  const ask = (text: string) => { if (text.trim()) void sendMessage({ text: text.trim() }); };
 
   return (
     <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
