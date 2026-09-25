@@ -7,6 +7,8 @@ import { storiesQuery } from "@/lib/stories";
 import { getPersonAbout } from "@/lib/about.functions";
 import { StoryCard } from "@/components/StoryCard";
 import { Button } from "@/components/ui/button";
+import { DetailsBox } from "@/components/DetailsBox";
+import { ConnectedLine } from "@/components/PatternsBox";
 
 export const Route = createFileRoute("/people/$id")({
   loader: ({ params }) => {
@@ -63,6 +65,7 @@ function Profile() {
           <p className="mt-1 text-muted-foreground">{ageOf(p)} years old</p>
         </div>
       </div>
+      <DetailsBox id={id} name={p.name} />
 
       {/* About — AI-written from their era and their stories */}
       <div className="mt-6 rounded-xl border border-border bg-card p-5">
@@ -110,6 +113,7 @@ function Profile() {
         {mine.length === 0 && (
           <p className="mt-2 text-sm text-muted-foreground">Record the first one and this page will start filling in.</p>
         )}
+        <ConnectedLine id={id} />
       </div>
 
 
