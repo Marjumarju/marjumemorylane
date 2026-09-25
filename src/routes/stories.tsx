@@ -5,6 +5,7 @@ import { categories, people, personById } from "@/lib/family";
 import { storiesQuery } from "@/lib/stories";
 import { StoryCard } from "@/components/StoryCard";
 import { PatternsBox } from "@/components/PatternsBox";
+import { FamilyChat } from "@/components/FamilyChat";
 
 type Search = { person?: string | undefined; category?: string | undefined };
 
@@ -69,6 +70,7 @@ function Browse() {
         </p>
       )}
 
+      {!filtered && <div className="mb-8"><FamilyChat /></div>}
       {!filtered && <PatternsBox />}
 
       {/* Category grid */}

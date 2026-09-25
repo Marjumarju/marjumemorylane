@@ -35,6 +35,39 @@ export type Database = {
         }
         Relationships: []
       }
+      person_timeline: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          person_id: string
+          place: string | null
+          source: string
+          story_id: string | null
+          year: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          person_id: string
+          place?: string | null
+          source?: string
+          story_id?: string | null
+          year?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          person_id?: string
+          place?: string | null
+          source?: string
+          story_id?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
       stories: {
         Row: {
           about_person_id: string | null
