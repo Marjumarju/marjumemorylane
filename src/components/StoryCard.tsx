@@ -7,6 +7,9 @@ import { categoryById, personById, subtopicById } from "@/lib/family";
 import { audioUrl, type Story } from "@/lib/stories";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useServerFn } from "@tanstack/react-start";
+import { transcribeAudio } from "@/lib/transcribe.functions";
+import { blobToBase64 } from "@/lib/audio";
 
 export function StoryCard({ story }: { story: Story }) {
   const teller = personById(story.storyteller_id);
@@ -19,6 +22,20 @@ export function StoryCard({ story }: { story: Story }) {
     queryFn: () => audioUrl(story.audio_path!),
     enabled: !!story.audio_path,
     staleTime: 30 * 60_000,
+  });
+  const transcribeFn = useServerFn(transcribeAudio);
+  const transcript = (story as { transcript?: string | null }).transcript;
+  const tx = useMutation({
+    mutationFn: async () => {
+      const { data: file, error } = await supabase.storage.from("recordings").download(story.audio_path!);
+      if (error || !file) throw new Error("Couldn't load the recording");
+      const mime = file.type || (story.audio_path!.endsWith(".m4a") ? "audio/mp4" : "audio/webm");
+      const r = await transcribeFn({ data: { audio: await blobToBase64(file), mime } });
+      const up = await supabase.from("stories").update({ transcript: r.text } as never).eq("id", story.id);
+      if (up.error) throw up.error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["stories"] }),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't transcribe"),
   });
   const del = useMutation({
     mutationFn: async () => {
@@ -71,6 +88,12 @@ export function StoryCard({ story }: { story: Story }) {
         {" · "}{new Date(story.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
       </div>
       {url.data && <audio controls src={url.data} className="mt-4 w-full" />}
+      {transcript && <p className="mt-3 whitespace-pre-line text-sm leading-relaxed">{transcript}</p>}
+      {story.audio_path && !transcript && (
+        <Button size="sm" variant="outline" className="mt-3" disabled={tx.isPending} onClick={() => tx.mutate()}>
+          {tx.isPending ? "Writing it down…" : "Make transcript"}
+        </Button>
+      )}
       {story.note && <p className="mt-3 whitespace-pre-line text-sm">{story.note}</p>}
     </article>
   );
