@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-function PersonChip({ p, count }: { p: Person; count: number }) {
+function PersonChip({ p }: { p: Person }) {
   return (
     <Link to="/people/$id" params={{ id: p.id }} className="group block rounded-lg border border-border bg-card px-4 py-3 text-center transition hover:border-primary">
       <div className="font-display text-lg group-hover:text-primary">{p.name}</div>
@@ -25,8 +25,6 @@ function PersonChip({ p, count }: { p: Person; count: number }) {
 }
 
 function Home() {
-  const { data: stories = [] } = useQuery(storiesQuery);
-  const count = (id: string) => stories.filter((s) => s.storyteller_id === id || s.about_person_id === id).length;
   const g1 = people.filter((p) => generation(p) === 1);
   const g2 = people.filter((p) => generation(p) === 2 && p.parents.length > 0);
 
