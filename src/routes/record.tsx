@@ -53,6 +53,14 @@ function Record() {
 
   useEffect(() => () => window.clearInterval(timer.current), []);
 
+  function ask(c: Category) {
+    const subs = c.subtopics.length > 1 && pick ? c.subtopics.filter((s) => s.id !== pick.s.id) : c.subtopics;
+    const s = subs[Math.floor(Math.random() * subs.length)];
+    if (!s) return;
+    setPick({ c, s });
+    setQuestion(s.example_question);
+  }
+
   async function start() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -121,40 +129,26 @@ function Record() {
         {teller?.tells_stories === "with_help" && <p className="mt-3 text-sm text-muted-foreground">Sit with {teller.name} and read the question out loud together.</p>}
       </Step>
 
-      {teller && adult && (
-        <Step n={2} title="Whose story is it?">
-          <div className="flex flex-wrap gap-2">
-            <button className={pill(aboutId === teller.id)} onClick={() => { setAboutId(teller.id); setPick(null); }}>My own</button>
-            {littleOnes.map((k) => (
-              <button key={k.id} className={pill(aboutId === k.id)} onClick={() => { setAboutId(k.id); setPick(null); }}>About {k.name}</button>
-            ))}
-          </div>
-        </Step>
-      )}
-
       {teller && (
-        <Step n={adult ? 3 : 2} title="Pick a topic">
-          <div className="space-y-5">
+        <Step n={2} title="Pick an area">
+          <div className="flex flex-wrap gap-2">
             {topics.map((c) => (
-              <div key={c.id}>
-                <div className="font-display text-lg">{c.title}</div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {c.subtopics.map((s) => (
-                    <button key={s.id} className={pill(pick?.s.id === s.id)} onClick={() => { setPick({ c, s }); setQuestion(s.example_question); }}>{s.title}</button>
-                  ))}
-                </div>
-              </div>
+              <button key={c.id} className={pill(pick?.c.id === c.id)} onClick={() => ask(c)}>{c.title}</button>
             ))}
+            <button className={pill(false)} onClick={() => topics.length && ask(topics[Math.floor(Math.random() * topics.length)]!)}>Surprise me</button>
           </div>
         </Step>
       )}
 
       {pick && (
-        <Step n={adult ? 4 : 3} title="Your question">
+        <Step n={3} title="Your question">
           <div className="rounded-xl bg-secondary p-6">
             <p className="font-display text-2xl leading-snug">{question}</p>
             {pick.s.shared && (
               <p className="mt-3 text-sm text-muted-foreground">This is a shared memory. Tell your own version, the way you remember it. Try not to listen to anyone else's first.</p>
+            )}
+            {!recording && !blob && (
+              <button className="mt-4 text-sm text-primary underline underline-offset-4" onClick={() => ask(pick.c)}>Give me another question</button>
             )}
           </div>
 
