@@ -64,6 +64,32 @@ function Profile() {
         </div>
       </div>
 
+      {/* About — AI-written from their era and their stories */}
+      <div className="mt-6 rounded-xl border border-border bg-card p-5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <Sparkles className="h-4 w-4 text-primary" />
+            About {p.name}
+          </div>
+          {aboutQuery.data && (
+            <button
+              type="button"
+              onClick={() => queryClient.invalidateQueries({ queryKey: aboutKey })}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+            >
+              <RefreshCw className="h-3 w-3" /> Refresh
+            </button>
+          )}
+        </div>
+        {aboutQuery.isPending ? (
+          <p className="mt-2 text-sm text-muted-foreground">Writing a few words about {p.name}…</p>
+        ) : aboutQuery.isError ? (
+          <p className="mt-2 text-sm text-muted-foreground">{aboutQuery.error.message}</p>
+        ) : (
+          <p className="mt-2 text-sm leading-relaxed">{aboutQuery.data.about}</p>
+        )}
+      </div>
+
       {/* Story snapshot — grows as stories are told */}
       <div className="mt-6 rounded-xl border border-border bg-card p-5">
         <div className="flex items-center gap-2 text-sm font-medium">
