@@ -5,7 +5,7 @@ import { app, ageOf, generation, personById } from "@/lib/family";
 import type { Database } from "@/integrations/supabase/types";
 
 /** Streams a Responses call and returns the final text. */
-async function askAi(prompt: string): Promise<string> {
+export async function askAi(prompt: string): Promise<string> {
   const key = process.env["LOVABLE_API_KEY"];
   if (!key) throw new Error("AI isn't set up yet.");
   const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
@@ -84,6 +84,10 @@ export const getPersonAbout = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(12);
 
+    const { data: det } = await supabase.from("person_details").select("city, studies").eq("person_id", p.id).maybeSingle();
+    const studies = ((det?.studies as { what?: string; where?: string }[] | null) ?? []).map((x) => [x.what, x.where].filter(Boolean).join(" at ")).filter(Boolean);
+    const facts = [det?.city ? `Lives in ${det.city}.` : "", studies.length ? `Studied: ${studies.join("; ")}.` : ""].filter(Boolean).join(" ");
+
     const snippets = (rows ?? [])
       .map((r) => [r.question, r.transcript || r.note].filter(Boolean).join(" — "))
       .filter(Boolean)
@@ -92,11 +96,12 @@ export const getPersonAbout = createServerFn({ method: "GET" })
     const prompt = [
       `Write a short, warm "About" paragraph (2-4 sentences, plain text, no headings) about ${p.name}, ${ageOf(p)} years old, for a private family storybank.`,
       `Era context: ${era}`,
+      facts ? `Facts: ${facts}` : "",
       snippets.length
         ? `They have told these stories (question — what they said):\n${snippets.join("\n")}\nWeave in what their stories reveal about them, without listing them.`
         : `They have not recorded any stories yet; describe their era and gently invite the first story.`,
       `Write in English, third person, affectionate but not gushing.`,
-    ].join("\n\n");
+    ].filter(Boolean).join("\n\n");
 
     const about = await askAi(prompt);
     return { about, storyCount: rows?.length ?? 0 };
