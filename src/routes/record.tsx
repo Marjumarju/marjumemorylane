@@ -8,12 +8,12 @@ import { ageOf, followUps, generation, people, personById, tellers, topicsFor, t
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-type Search = { teller?: string; about?: string };
+type Search = { teller?: string | undefined; about?: string | undefined };
 
 export const Route = createFileRoute("/record")({
   validateSearch: (s: Record<string, unknown>): Search => ({
-    teller: typeof s.teller === "string" ? s.teller : undefined,
-    about: typeof s.about === "string" ? s.about : undefined,
+    teller: typeof s["teller"] === "string" ? s["teller"] : undefined,
+    about: typeof s["about"] === "string" ? s["about"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -89,7 +89,7 @@ function Record() {
       const ext = blob.type.includes("mp4") ? "m4a" : "webm";
       audio_path = `${teller.id}/${crypto.randomUUID()}.${ext}`;
       const up = await supabase.storage.from("recordings").upload(audio_path, blob, { contentType: blob.type });
-      if (up.error) { setSaving(false); return toast.error(up.error.message); }
+      if (up.error) { setSaving(false); toast.error(up.error.message); return; }
     }
     const { error } = await supabase.from("stories").insert({
       storyteller_id: teller.id,
@@ -102,7 +102,7 @@ function Record() {
       duration_seconds: blob ? secs : null,
     });
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await qc.invalidateQueries({ queryKey: ["stories"] });
     toast.success("Story saved. Thank you!");
     nav({ to: "/people/$id", params: { id: about?.id ?? teller.id } });

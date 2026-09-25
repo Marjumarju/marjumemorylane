@@ -4,12 +4,12 @@ import { categories, people } from "@/lib/family";
 import { storiesQuery } from "@/lib/stories";
 import { StoryCard } from "@/components/StoryCard";
 
-type Search = { person?: string; category?: string };
+type Search = { person?: string | undefined; category?: string | undefined };
 
 export const Route = createFileRoute("/stories")({
   validateSearch: (s: Record<string, unknown>): Search => ({
-    person: typeof s.person === "string" ? s.person : undefined,
-    category: typeof s.category === "string" ? s.category : undefined,
+    person: typeof s["person"] === "string" ? s["person"] : undefined,
+    category: typeof s["category"] === "string" ? s["category"] : undefined,
   }),
   head: () => ({
     meta: [
