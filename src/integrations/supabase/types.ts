@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      stories: {
+        Row: {
+          about_person_id: string | null
+          audio_path: string | null
+          category_id: string
+          created_at: string
+          created_by: string
+          duration_seconds: number | null
+          id: string
+          note: string | null
+          question: string
+          storyteller_id: string
+          subtopic_id: string
+          title: string | null
+        }
+        Insert: {
+          about_person_id?: string | null
+          audio_path?: string | null
+          category_id: string
+          created_at?: string
+          created_by?: string
+          duration_seconds?: number | null
+          id?: string
+          note?: string | null
+          question: string
+          storyteller_id: string
+          subtopic_id: string
+          title?: string | null
+        }
+        Update: {
+          about_person_id?: string | null
+          audio_path?: string | null
+          category_id?: string
+          created_at?: string
+          created_by?: string
+          duration_seconds?: number | null
+          id?: string
+          note?: string | null
+          question?: string
+          storyteller_id?: string
+          subtopic_id?: string
+          title?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
