@@ -94,7 +94,7 @@ function Home() {
       <div className="mt-10 overflow-x-auto pb-6">
         <div className="mx-auto flex min-w-max flex-col items-center px-4">
           {/* Grandparents at the root */}
-          <Couple a={g1[0]} b={g1[1]} />
+          {g1[0] && <Couple a={g1[0]} b={g1[1]} />}
 
           {/* Trunk down to the horizontal line that branches to each child */}
           <div className="h-8 w-px bg-border" />
