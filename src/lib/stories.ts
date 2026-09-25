@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const storiesQuery = queryOptions({
   queryKey: ["stories"],
   queryFn: async () => {
-    const { data, error } = await supabase.from("stories").select("*").order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("stories").select("*, story_media(*)").order("created_at", { ascending: false });
     if (error) throw error;
     return data;
   },

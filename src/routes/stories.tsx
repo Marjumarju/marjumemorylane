@@ -10,6 +10,7 @@ import { PatternsBox } from "@/components/PatternsBox";
 import { Button } from "@/components/ui/button";
 import { generateFamilyHistory } from "@/lib/family-history.functions";
 import { FamilyChat } from "@/components/FamilyChat";
+import { TopicStoryTimeline } from "@/components/TopicStoryTimeline";
 
 type Search = { person?: string | undefined; category?: string | undefined };
 
@@ -41,6 +42,7 @@ function Browse() {
   const set = (k: keyof Search, v: string) => navigate({ search: (prev) => ({ ...prev, [k]: v || undefined }) });
 
   const filtered = !!(person || category);
+  const selectedCategory = categories.find((item) => item.id === category);
   const tellerCount = new Set(stories.map((s) => s.storyteller_id)).size;
   const latest = stories[0];
   const [familyHistory, setFamilyHistory] = useState<string | null>(null);
@@ -141,7 +143,7 @@ function Browse() {
       {/* Person filter + results */}
       <div className="mt-10 flex flex-wrap items-center gap-3">
         <h2 className="text-xs uppercase tracking-widest text-muted-foreground">
-          {filtered ? "Matching stories" : "All stories"}
+          {selectedCategory ? "Filter this timeline" : filtered ? "Matching stories" : "All stories"}
         </h2>
         <select className={sel} value={person ?? ""} onChange={(e) => set("person", e.target.value)}>
           <option value="">Everyone</option>
@@ -153,15 +155,15 @@ function Browse() {
           </Link>
         )}
       </div>
-      <div className="mt-4 space-y-4">
-        {isLoading ? (
+      {isLoading ? (
           <p className="text-muted-foreground">Loading…</p>
+        ) : selectedCategory && list.length ? (
+          <TopicStoryTimeline category={selectedCategory} stories={list} />
         ) : list.length ? (
-          list.map((s) => <StoryCard key={s.id} story={s} />)
+          <div className="mt-4 space-y-4">{list.map((s) => <StoryCard key={s.id} story={s} />)}</div>
         ) : (
           <p className="text-muted-foreground">No stories here yet — be the first to tell one.</p>
         )}
-      </div>
     </div>
   );
 }
