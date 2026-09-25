@@ -22,17 +22,17 @@ export function StoryMedia({ storyId, media }: { storyId: string; media?: StoryM
       await uploadStoryMedia(storyId, file);
       if (old) await removeStoryMedia(old);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       setPreview(null);
-      void queryClient.invalidateQueries({ queryKey: ["stories"] });
+      await queryClient.invalidateQueries({ queryKey: ["stories"] });
       toast.success(media ? "Media replaced" : "Media added");
     },
     onError: (error) => toast.error(error instanceof Error ? error.message : "Couldn't save the media"),
   });
   const remove = useMutation({
     mutationFn: () => media ? removeStoryMedia(media) : Promise.resolve(),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["stories"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["stories"] });
       toast.success("Media removed");
     },
     onError: () => toast.error("Couldn't remove the media"),

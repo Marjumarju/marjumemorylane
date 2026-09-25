@@ -66,8 +66,7 @@ export function StoryCard({ story, hideTopic = false }: { story: Story; hideTopi
       <div className="flex items-start justify-between gap-3">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">
           {!hideTopic && <>{categoryById(story.category_id)?.title} · {sub?.title}</>}
-          {hideTopic && sub?.shared && <>Shared memory</>}
-          {sub?.shared && <span className="ml-2 rounded bg-accent px-1.5 py-0.5 text-accent-foreground normal-case tracking-normal">shared memory</span>}
+          {sub?.shared && <span className={hideTopic ? "rounded bg-accent px-1.5 py-0.5 text-accent-foreground normal-case tracking-normal" : "ml-2 rounded bg-accent px-1.5 py-0.5 text-accent-foreground normal-case tracking-normal"}>shared memory</span>}
         </div>
         {!confirming ? (
           <button
