@@ -46,7 +46,7 @@ export const extractTimeline = createServerFn({ method: "POST" })
       throw new Error("Couldn't read the timeline — try again.");
     }
     const seen = new Set((existing ?? []).map((e) => `${e.year}|${e.label.toLowerCase()}`));
-    const fresh = events.filter((e) => !seen.has(`${e.year}|${e.label.toLowerCase()}`));
+    const fresh = events.filter((e) => !seen.has(`${e.year}|${e.label.toLowerCase()}`)).slice(0, 6);
     if (fresh.length) {
       const { error } = await sb.from("person_timeline").insert(fresh.map((e) => ({ ...e, person_id: p.id, source: "story" })));
       if (error) throw new Error(error.message);
