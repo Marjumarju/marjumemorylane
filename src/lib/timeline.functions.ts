@@ -16,7 +16,11 @@ export const extractTimeline = createServerFn({ method: "POST" })
       sb.from("person_details").select("city, studies").eq("person_id", p.id).maybeSingle(),
       sb.from("person_timeline").select("year, label").eq("person_id", p.id),
     ]);
-    const studies = ((det?.studies as { what?: string; where?: string }[] | null) ?? []).map((s) => [s.what, s.where].filter(Boolean).join(" at "));
+    const studies = ((det?.studies as { what?: string; where?: string; from_year?: number | null; to_year?: number | null }[] | null) ?? []).map((s) => {
+      const base = [s.what, s.where].filter(Boolean).join(" at ");
+      const years = s.from_year && s.to_year ? ` (${s.from_year}–${s.to_year})` : s.from_year ? ` (from ${s.from_year})` : s.to_year ? ` (until ${s.to_year})` : "";
+      return base + years;
+    });
     const prompt = [
       `Build life timeline events for ${p.name}, born ${p.birth_year}.`,
       `Return ONLY a JSON array like [{"year": 1993, "label": "Started studying logistics at Taltech", "place": "Tallinn", "story_id": null}]. year may be null if unknown; place may be null; story_id is the id of the story the event came from, or null.`,
