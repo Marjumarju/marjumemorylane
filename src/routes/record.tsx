@@ -181,8 +181,8 @@ function Record() {
     const { data: savedStory, error } = await supabase.from("stories").insert({
       storyteller_id: teller.id,
       about_person_id: about?.id ?? teller.id,
-      category_id: free ? null : pick.c.id,
-      subtopic_id: free ? null : pick.s.id,
+      category_id: pick && !free ? pick.c.id : null,
+      subtopic_id: pick && !free ? pick.s.id : null,
       question: free ? (question.trim() || null) : question,
       note: note.trim() || null,
       audio_path,
@@ -251,7 +251,7 @@ function Record() {
               <p className="mt-3 text-sm text-muted-foreground">This is a shared memory. Tell your own version, the way you remember it. Try not to listen to anyone else's first.</p>
             )}
             {!recording && !blob && (
-              <button className="mt-4 text-sm text-primary underline underline-offset-4" onClick={() => ask(pick.c)}>Give me another question</button>
+              <button className="mt-4 text-sm text-primary underline underline-offset-4" onClick={() => { if (pick) ask(pick.c); }}>Give me another question</button>
             )}
           </div>
           )}
